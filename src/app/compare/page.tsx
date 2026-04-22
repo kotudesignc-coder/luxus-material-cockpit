@@ -115,6 +115,7 @@ export default function ComparePage() {
                   linesStyle={{ background: "rgba(255,255,255,0.85)" }}
                 />
               }
+              style={{ position: "absolute", inset: 0, height: "100%", width: "100%" }}
             />
           </div>
         </motion.div>
