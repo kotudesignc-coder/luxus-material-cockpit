@@ -49,6 +49,18 @@
 }
 
 :root {
+  /* ===== LUXUS × 可塗設計 品牌 tokens ===== */
+  --luxus-cream: #f7f3ee;       /* 背景米白 */
+  --luxus-ink: #1b1a17;         /* 文字深炭 */
+  --luxus-amber: #8a6b3f;       /* 品牌琥珀（主強調） */
+  --luxus-amber-soft: #c9a882;  /* 琥珀淡 */
+  --luxus-amber-deep: #6e5233;  /* 琥珀深 */
+  --luxus-sand: #d9c9b3;        /* 沙色 */
+  --luxus-muted: #8a7f72;       /* 次文字 */
+  --luxus-muted-soft: #4a463f;  /* 段落灰 */
+  --luxus-line: rgb(27 26 23 / 0.08); /* 細分隔線 */
+  --luxus-surface: rgb(255 255 255 / 0.6); /* 卡片底 */
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
