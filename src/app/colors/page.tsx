@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { CockpitLayout } from "@/components/cockpit-layout";
 import { PageNav } from "@/components/page-nav";
 import { getPageByHref } from "@/lib/pages";
-import { COLORS, FAMILIES, ROOMS, type Color } from "@/lib/colors-mock";
+import { COLORS, FAMILIES, ROOMS, type Color } from "@/lib/colors";
 
 const HREF = "/colors";
 
@@ -193,6 +193,9 @@ export default function ColorsPage() {
                   </div>
                   <div className="mt-1.5 text-xs text-[#8a7f72] tracking-widest uppercase">
                     {activeColor.code} · {activeColor.hex.toUpperCase()}
+                  </div>
+                  <div className="mt-1 text-[11px] text-[#8a7f72]">
+                    {activeColor.series}
                   </div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {activeColor.mood.map((m) => (

@@ -72,9 +72,9 @@ CROPS = [
 
     # page 28 removed: the iPad mockup overlaps banner text; can't get a clean rectangle.
 
-    # page 30 — concrete corridor atmospheric shot. Title "善用 AI 工具..." is in middle band.
-    # Use top strip only (above title baseline) — wide cinematic crop.
-    (30, "mood-concrete-corridor.png", (0, 0, 3000, 820)),
+    # page 30 — concrete corridor atmospheric shot. Title "善用 AI 工具..." begins around y=610.
+    # Use top strip only, well above title — cinematic crop.
+    (30, "mood-concrete-corridor.png", (0, 0, 3000, 580)),
 ]
 
 
