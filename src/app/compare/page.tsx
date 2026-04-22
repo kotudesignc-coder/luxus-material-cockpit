@@ -4,6 +4,7 @@ import {
   ReactCompareSlider,
   ReactCompareSliderHandle,
 } from "react-compare-slider";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { CockpitLayout } from "@/components/cockpit-layout";
 import { PageNav } from "@/components/page-nav";
@@ -13,30 +14,32 @@ const HREF = "/compare";
 
 function TraditionalPanel() {
   return (
-    <div className="relative w-full h-full bg-[#e9e1d3] overflow-hidden flex items-center justify-center">
-      {/* scattered color swatches */}
-      <div className="absolute inset-0 opacity-90">
-        <div className="absolute top-[12%] left-[10%] w-28 h-40 bg-[#c9a882] rotate-[-12deg] shadow-lg" />
-        <div className="absolute top-[20%] left-[28%] w-24 h-36 bg-[#8a7f72] rotate-[6deg] shadow-lg" />
-        <div className="absolute top-[8%] right-[22%] w-32 h-44 bg-[#d9c9b3] rotate-[14deg] shadow-lg" />
-        <div className="absolute bottom-[18%] left-[15%] w-28 h-40 bg-[#6e5233] rotate-[8deg] shadow-lg" />
-        <div className="absolute bottom-[14%] right-[10%] w-32 h-44 bg-[#8a6b3f] rotate-[-10deg] shadow-lg" />
-        <div className="absolute bottom-[28%] right-[34%] w-24 h-36 bg-[#4a463f] rotate-[3deg] shadow-lg" />
-      </div>
+    <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
+      {/* real photo of scattered swatches */}
+      <Image
+        src="/pdf-assets/pain-traditional-swatches.png"
+        alt="桌上散落的紙色卡與樣品 — 傳統選色方式"
+        fill
+        className="object-cover grayscale-[0.1]"
+        sizes="50vw"
+      />
+      {/* darken for readable label */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#1b1a17]/45 via-[#1b1a17]/15 to-[#1b1a17]/5" />
+
       {/* overlay label */}
       <div className="relative z-10 text-center px-8">
-        <div className="text-[10px] md:text-xs tracking-[0.45em] uppercase text-[#1b1a17]/60 mb-3">
+        <div className="text-[10px] md:text-xs tracking-[0.45em] uppercase text-white/80 mb-3">
           Before
         </div>
-        <h3 className="font-[family-name:var(--font-serif-tc)] text-4xl md:text-5xl font-medium text-[#1b1a17]">
+        <h3 className="font-[family-name:var(--font-serif-tc)] text-4xl md:text-5xl font-medium text-white drop-shadow-lg">
           傳統模式
         </h3>
-        <p className="mt-3 text-base md:text-lg text-[#4a463f]">
+        <p className="mt-3 text-base md:text-lg text-white/90">
           翻樣品 · 看色卡 · 靠想像
         </p>
       </div>
       {/* bottom hint */}
-      <div className="absolute bottom-5 left-0 right-0 text-center text-[11px] tracking-widest uppercase text-[#1b1a17]/50">
+      <div className="absolute bottom-5 left-0 right-0 text-center text-[11px] tracking-widest uppercase text-white/70">
         「大概就是這個顏色吧⋯⋯」
       </div>
     </div>
@@ -45,36 +48,24 @@ function TraditionalPanel() {
 
 function AIPanel() {
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-[#8a6b3f] via-[#c9a882] to-[#e9dcc5] overflow-hidden flex items-center justify-center">
-      {/* stylized iPad mockup in the warmed space */}
-      <div className="absolute inset-0 opacity-85">
-        {/* warm wall wash */}
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-[#8a6b3f]/20 to-[#c9a882]/30" />
-      </div>
-
-      <div className="relative z-10 w-[62%] max-w-[340px] aspect-[3/4] bg-[#1b1a17] rounded-[28px] p-2 shadow-2xl shadow-black/30">
-        <div className="w-full h-full rounded-[22px] bg-[#f7f3ee] overflow-hidden flex flex-col">
-          {/* preview top: space */}
-          <div className="flex-1 bg-gradient-to-br from-[#c9a882] via-[#8a6b3f] to-[#6e5233] relative">
-            <div className="absolute top-3 left-3 right-3 h-2 rounded-full bg-white/30" />
-            <div className="absolute inset-x-6 bottom-6 top-12 rounded-lg bg-gradient-to-t from-black/10 to-transparent" />
-          </div>
-          {/* palette row */}
-          <div className="flex gap-1.5 p-3">
-            <div className="flex-1 h-8 rounded bg-[#d9c9b3]" />
-            <div className="flex-1 h-8 rounded bg-[#c9a882] ring-2 ring-[#1b1a17]" />
-            <div className="flex-1 h-8 rounded bg-[#8a6b3f]" />
-            <div className="flex-1 h-8 rounded bg-[#6e5233]" />
-          </div>
-        </div>
-      </div>
+    <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-[#f7ede0]">
+      {/* real iPad demo shot */}
+      <Image
+        src="/pdf-assets/compare-ipad-ai-palette.png"
+        alt="iPad 上 LUXUS 選材系統：空間預覽 + 色票列表"
+        fill
+        className="object-cover"
+        sizes="50vw"
+      />
+      {/* subtle overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#8a6b3f]/30 via-transparent to-[#f7ede0]/20" />
 
       {/* label pill */}
-      <div className="absolute top-8 right-8 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur text-[11px] tracking-widest uppercase text-[#1b1a17]">
+      <div className="absolute top-8 right-8 px-4 py-1.5 rounded-full bg-white/95 backdrop-blur text-[11px] tracking-widest uppercase text-[#1b1a17] shadow-lg">
         After · AI 選材
       </div>
 
-      <div className="absolute bottom-5 left-0 right-0 text-center text-[11px] tracking-widest uppercase text-[#f7f3ee]/90">
+      <div className="absolute bottom-5 left-0 right-0 text-center text-[11px] tracking-widest uppercase text-white drop-shadow">
         「這個顏色鋪上去，就是這樣」
       </div>
     </div>

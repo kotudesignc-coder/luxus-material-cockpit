@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CockpitLayout } from "@/components/cockpit-layout";
+import { SpacePhoto } from "@/components/space-photo";
 import { PAGES } from "@/lib/pages";
 
 export default function Home() {
@@ -41,21 +42,28 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Right: visual placeholder */}
+        {/* Right: hero visual (real LUXUS space) */}
         <div className="relative aspect-[4/5] w-full max-w-[520px] mx-auto lg:mx-0 lg:ml-auto">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#d9c9b3] via-[#c9a882] to-[#6e5233] shadow-2xl shadow-[#8a6b3f]/20" />
-          <div className="absolute inset-0 rounded-3xl flex items-end p-8">
-            <div className="bg-[#f7f3ee]/95 backdrop-blur rounded-2xl px-6 py-5 w-full">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#8a6b3f]" />
-                <div className="w-10 h-10 rounded-full bg-[#c9a882]" />
-                <div className="w-10 h-10 rounded-full bg-[#d9c9b3]" />
-                <div className="w-10 h-10 rounded-full bg-[#6e5233]" />
-                <div className="ml-auto text-xs tracking-widest uppercase text-[#8a7f72]">
+          <SpacePhoto
+            src="/pdf-assets/hero-living-room.png"
+            alt="LUXUS 選材後的客廳空間，溫潤米色牆面配上米色沙發與木紋傢俱"
+            aspect="4/5"
+            rounded="3xl"
+            priority
+            className="shadow-2xl shadow-[#8a6b3f]/20"
+          />
+          <div className="absolute inset-0 rounded-3xl pointer-events-none flex items-end p-6">
+            <div className="bg-[#f7f3ee]/95 backdrop-blur rounded-2xl px-5 py-4 w-full">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-[#8a6b3f]" />
+                <div className="w-9 h-9 rounded-full bg-[#c9a882]" />
+                <div className="w-9 h-9 rounded-full bg-[#d9c9b3]" />
+                <div className="w-9 h-9 rounded-full bg-[#6e5233]" />
+                <div className="ml-auto text-[10px] tracking-widest uppercase text-[#8a7f72]">
                   LUXUS
                 </div>
               </div>
-              <div className="mt-3 text-sm text-[#4a463f]">
+              <div className="mt-2 text-xs text-[#4a463f]">
                 點一下色票，整個空間立刻換色。
               </div>
             </div>

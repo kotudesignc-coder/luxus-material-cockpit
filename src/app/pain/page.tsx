@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { CockpitLayout } from "@/components/cockpit-layout";
 import { PageNav } from "@/components/page-nav";
+import { SpacePhoto } from "@/components/space-photo";
 import { getPageByHref } from "@/lib/pages";
 
 const HREF = "/pain";
@@ -11,7 +12,10 @@ type PainCard = {
   num: string;
   title: string;
   desc: string;
-  /** decorative gradient for visual */
+  /** 真實照片 src（優先） */
+  photo?: string;
+  photoAlt?: string;
+  /** 備用漸層 */
   tint: string;
   /** 情境對白，讓觀眾秒有感 */
   quote: string;
@@ -22,6 +26,8 @@ const CARDS: PainCard[] = [
     num: "01",
     title: "色卡想像 ≠ 真實空間",
     desc: "指甲大的樣品，看不出 5 米牆面鋪上去的壓迫或溫度。客戶只好靠想像，決定完又後悔。",
+    photo: "/pdf-assets/pain-traditional-swatches.png",
+    photoAlt: "傳統方式：桌上散落一堆紙色卡與樣品",
     tint: "linear-gradient(135deg, #d9c9b3, #8a6b3f)",
     quote: "「我以為會更淡一點……」",
   },
@@ -29,6 +35,8 @@ const CARDS: PainCard[] = [
     num: "02",
     title: "光線會騙人",
     desc: "門市的投射燈下漂亮，回到客戶家的自然光完全不一樣。黃光、日光、夜裡的暖燈，顏色會變三次。",
+    photo: "/pdf-assets/space-bedroom-lamp.png",
+    photoAlt: "臥室床邊燈具下的暖光與陰影",
     tint: "linear-gradient(135deg, #c9a882, #4a463f)",
     quote: "「怎麼晚上看起來變灰綠？」",
   },
@@ -36,6 +44,8 @@ const CARDS: PainCard[] = [
     num: "03",
     title: "家人意見吵不完",
     desc: "太太、先生、媽媽、孩子，每個人想像的「莫蘭迪」都不同。一場討論，三個禮拜就沒了。",
+    photo: "/pdf-assets/mood-concrete-corridor.png",
+    photoAlt: "多個塗料色彩牆面並排，難以抉擇",
     tint: "linear-gradient(135deg, #8a7f72, #1b1a17)",
     quote: "「等我問一下家人再回你……」",
   },
@@ -70,10 +80,14 @@ export default function PainPage() {
               transition={{ delay: i * 0.15, duration: 0.6, ease: "easeOut" }}
               className="group relative overflow-hidden rounded-2xl border border-[#1b1a17]/10 bg-white/60 backdrop-blur-sm p-7 md:p-8 flex flex-col gap-5 hover:border-[#8a6b3f]/40 transition"
             >
-              {/* decorative swatch */}
-              <div
-                className="h-28 md:h-32 w-full rounded-xl shadow-inner"
-                style={{ background: c.tint }}
+              {/* photo or decorative swatch */}
+              <SpacePhoto
+                src={c.photo}
+                alt={c.photoAlt ?? c.title}
+                aspect="16/9"
+                rounded="xl"
+                fallback={c.tint}
+                className="!shadow-inner"
               />
 
               <div className="flex items-baseline gap-3">

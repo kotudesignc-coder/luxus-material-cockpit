@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { CockpitLayout } from "@/components/cockpit-layout";
 import { PageNav } from "@/components/page-nav";
@@ -22,17 +23,14 @@ const NG_POINTS = [
 
 function OKFrame() {
   return (
-    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-[#f5ecdf] via-[#e6d3b3] to-[#c9a882] shadow-lg">
-      {/* warm sunlight stripe */}
-      <div className="absolute top-0 left-0 right-0 h-[55%] bg-gradient-to-b from-white/30 to-transparent" />
-      {/* floor */}
-      <div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-b from-[#8a6b3f]/15 to-[#6e5233]/25" />
-      {/* baseboard */}
-      <div className="absolute bottom-[25%] left-0 right-0 h-[2px] bg-[#8a6b3f]/30" />
-      {/* sofa silhouette */}
-      <div className="absolute bottom-[22%] left-[18%] right-[18%] h-[25%] bg-[#8a7f72]/30 rounded-xl" />
-      <div className="absolute bottom-[22%] left-[18%] right-[18%] h-[35%] bg-[#8a7f72]/20 rounded-t-xl -translate-y-3" />
-      {/* green OK badge */}
+    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-[#e8dfcb]">
+      <Image
+        src="/pdf-assets/photo-guide-ok-living-room.png"
+        alt="OK 範例：光線充足、牆面完整、相機水平的客廳"
+        fill
+        className="object-cover"
+        sizes="(max-width: 1024px) 100vw, 50vw"
+      />
       <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-[#3f7a3f] text-white px-3 py-1.5 rounded-full text-xs tracking-widest uppercase shadow-lg">
         <span className="text-sm">✓</span> OK
       </div>
@@ -42,18 +40,14 @@ function OKFrame() {
 
 function NGFrame() {
   return (
-    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-[#2a2723] via-[#1b1a17] to-[#0e0d0b] shadow-lg">
-      {/* clutter hint */}
-      <div className="absolute inset-0 opacity-60">
-        <div className="absolute top-[20%] left-[10%] w-24 h-16 bg-[#4a463f] rotate-[-8deg]" />
-        <div className="absolute top-[15%] right-[15%] w-32 h-20 bg-[#3a3732] rotate-[6deg]" />
-        <div className="absolute bottom-[25%] left-[20%] w-28 h-20 bg-[#2e2b27]" />
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-black/10" />
-      {/* red X badge */}
-      <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-[#a04040] text-white px-3 py-1.5 rounded-full text-xs tracking-widest uppercase shadow-lg">
-        <span className="text-sm">✕</span> NG
-      </div>
+    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg bg-[#1b1a17]">
+      <Image
+        src="/pdf-assets/photo-guide-ng-grid.png"
+        alt="NG 範例四格：光線問題、遮擋過多、空間不適、結構問題"
+        fill
+        className="object-cover"
+        sizes="(max-width: 1024px) 100vw, 50vw"
+      />
     </div>
   );
 }
