@@ -48,25 +48,25 @@ function TraditionalPanel() {
 
 function AIPanel() {
   return (
-    <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-[#f7ede0]">
-      {/* real iPad demo shot */}
+    <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-[#e8dfd1]">
+      {/* LUXUS PETHRA 月亮雕塑牆案場 — 設計師夢寐以求的渲圖效果 */}
       <Image
-        src="/pdf-assets/compare-ipad-ai-palette.png"
-        alt="iPad 上 LUXUS 選材系統：空間預覽 + 色票列表"
+        src="/luxus/compare-after-pethra.jpg"
+        alt="LUXUS PETHRA 案場：米色塗料牆面 + 月亮雕塑 + 曲面沙發"
         fill
         className="object-cover"
         sizes="50vw"
       />
-      {/* subtle overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#8a6b3f]/30 via-transparent to-[#f7ede0]/20" />
+      {/* subtle overlay for label readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
 
       {/* label pill */}
       <div className="absolute top-8 right-8 px-4 py-1.5 rounded-full bg-white/95 backdrop-blur text-[11px] tracking-widest uppercase text-[#1b1a17] shadow-lg">
-        After · 選空間
+        After · 感受空間
       </div>
 
       <div className="absolute bottom-5 left-0 right-0 text-center text-[11px] tracking-widest uppercase text-white drop-shadow">
-        「這個顏色鋪上去，就是這樣」
+        「就是這個感覺」
       </div>
     </div>
   );
@@ -87,7 +87,8 @@ export default function ComparePage() {
             <span className="text-[#8a6b3f]">選空間！</span>
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
-            拉動中間 — 左邊是客戶手上那疊樣品，右邊是他真正會住進去的空間。
+            拉動中間 — 左邊是客戶手上那疊樣品，
+            右邊是過去設計師拚命渲圖才能給客戶看到的空間感。
           </p>
         </div>
 
@@ -130,9 +131,9 @@ export default function ComparePage() {
           className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-3 gap-px bg-[#1b1a17]/10 rounded-2xl overflow-hidden border border-[#1b1a17]/10"
         >
           {[
-            { k: "決策時間", a: "1–3 週", b: "30 秒", highlight: "×180" },
-            { k: "客戶信心", a: "靠口才", b: "眼見為憑", highlight: "直接" },
-            { k: "改色成本", a: "重新提案", b: "再點一下", highlight: "零摩擦" },
+            { k: "出圖時間", a: "渲圖 1–3 天", b: "AI 30 秒", highlight: "×8640" },
+            { k: "客戶信心", a: "靠口才說服", b: "眼見為憑", highlight: "直接" },
+            { k: "改色成本", a: "重新渲染", b: "點一下", highlight: "零摩擦" },
           ].map((row) => (
             <div key={row.k} className="bg-[#f7f3ee] p-6 md:p-7 flex flex-col gap-3">
               <div className="text-xs tracking-widest uppercase text-[#8a7f72]">
