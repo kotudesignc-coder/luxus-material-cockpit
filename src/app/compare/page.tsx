@@ -87,8 +87,7 @@ export default function ComparePage() {
             <span className="text-[#8a6b3f]">選空間！</span>
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
-            把中間的拉桿左右滑動 — 同樣一個客戶、同樣一面牆、同樣一個想要的「溫暖米色」，
-            兩種選材流程走出來，差距就在這。
+            拉動中間 — 左邊是客戶手上那疊樣品，右邊是他真正會住進去的空間。
           </p>
         </div>
 
