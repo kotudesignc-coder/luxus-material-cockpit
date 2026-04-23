@@ -225,9 +225,7 @@ export default function ColorsPage() {
           </div>
           <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4vw,3.75rem)] leading-[1.25] font-medium tracking-tight max-w-4xl">
             如果有個工具，
-            <span className="text-[#8a6b3f]">30 秒把顏色貼到空間</span>—
-            <br className="hidden md:block" />
-            我們跟 RoomDreaming 合作，做到了。
+            <span className="text-[#8a6b3f]">30 秒把顏色貼到空間。</span>
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
             從下面 LUXUS 色票挑一個，右邊空間立刻換色。
