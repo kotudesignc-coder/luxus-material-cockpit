@@ -3,24 +3,26 @@
 import { useState } from "react";
 
 type Props = {
-  /** YouTube video ID（11 字元，例：`dQw4w9WgXcQ`）或完整網址 */
-  youtube: string;
+  /** YouTube video ID（11 字元）或完整網址。與 src 擇一。 */
+  youtube?: string;
+  /** 直接 mp4 路徑（相對 /public）。與 youtube 擇一。 */
+  src?: string;
   /** 標題（顯示在影片上方） */
   title?: string;
   /** 副標（小字、灰色） */
   subtitle?: string;
   /** 圓角尺寸 */
   rounded?: "xl" | "2xl" | "3xl";
-  /** 顯示 YouTube 自動生成的縮圖當封面；點擊才載入 iframe（不拖慢首頁效能） */
+  /** 點擊封面才載入 iframe / mp4；對首頁 LCP 友善。預設 true */
   lazy?: boolean;
+  /** 封面圖（可選；未給時 YouTube 會用自動縮圖，mp4 則純黑底 + 播放鈕） */
+  poster?: string;
   className?: string;
 };
 
 /** 從 URL 或 ID 解出 11 字元 video id */
 function parseYoutubeId(input: string): string {
-  // 已是 ID
   if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
-  // 常見幾種 URL
   const patterns = [
     /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
     /youtu\.be\/([a-zA-Z0-9_-]{11})/,
@@ -31,7 +33,7 @@ function parseYoutubeId(input: string): string {
     const m = input.match(p);
     if (m) return m[1];
   }
-  return input; // fallback，讓 iframe 自己處理
+  return input;
 }
 
 const ROUNDED: Record<NonNullable<Props["rounded"]>, string> = {
@@ -41,20 +43,26 @@ const ROUNDED: Record<NonNullable<Props["rounded"]>, string> = {
 };
 
 /**
- * YouTube 影片嵌入。
- * 預設 lazy=true — 先顯示 YouTube 縮圖 + 大播放鈕，點擊才載入 iframe，
- * 對首頁 LCP / CLS 分數友善。
+ * 支援兩種影片來源：
+ *   <VideoEmbed youtube="xxx" ... />  使用 YouTube iframe
+ *   <VideoEmbed src="/video/demo.mp4" ... />  使用原生 <video>
+ *
+ * Lazy：預設先顯示黑底 + 大播放鈕，點了才開始載，LCP 友善。
  */
 export function VideoEmbed({
   youtube,
+  src,
   title,
   subtitle,
   rounded = "2xl",
   lazy = true,
+  poster,
   className = "",
 }: Props) {
-  const id = parseYoutubeId(youtube);
   const [loaded, setLoaded] = useState(!lazy);
+  const ytId = youtube ? parseYoutubeId(youtube) : null;
+  const coverSrc =
+    poster ?? (ytId ? `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg` : null);
 
   return (
     <div className={className}>
@@ -77,13 +85,26 @@ export function VideoEmbed({
         className={`relative aspect-video w-full overflow-hidden bg-[#1b1a17] shadow-2xl shadow-[#8a6b3f]/15 ${ROUNDED[rounded]}`}
       >
         {loaded ? (
-          <iframe
-            src={`https://www.youtube.com/embed/${id}?autoplay=1&rel=0`}
-            title={title ?? "影片"}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            className="absolute inset-0 w-full h-full border-0"
-          />
+          ytId ? (
+            <iframe
+              src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`}
+              title={title ?? "影片"}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full border-0"
+            />
+          ) : src ? (
+            <video
+              src={src}
+              autoPlay
+              controls
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 w-full h-full object-contain bg-black"
+            >
+              Your browser does not support video playback.
+            </video>
+          ) : null
         ) : (
           <button
             type="button"
@@ -91,19 +112,23 @@ export function VideoEmbed({
             className="absolute inset-0 w-full h-full group cursor-pointer"
             aria-label={`播放 ${title ?? "影片"}`}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`}
-              alt={title ?? "影片封面"}
-              className="absolute inset-0 w-full h-full object-cover"
-              onError={(e) => {
-                // maxres 有時候沒有，fallback 到 hqdefault
-                (e.target as HTMLImageElement).src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-              }}
-            />
-            {/* dark overlay for readability */}
+            {coverSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={coverSrc}
+                alt={title ?? "影片封面"}
+                className="absolute inset-0 w-full h-full object-cover"
+                onError={(e) => {
+                  if (ytId) {
+                    (e.target as HTMLImageElement).src = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+                  }
+                }}
+              />
+            ) : (
+              // mp4 無 poster：漂亮漸層底
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2a2723] via-[#1b1a17] to-[#0e0d0b]" />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent group-hover:from-black/60 transition" />
-            {/* play button */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-20 h-20 rounded-full bg-white/95 backdrop-blur flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-white transition">
                 <svg

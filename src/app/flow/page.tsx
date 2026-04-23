@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { CockpitLayout } from "@/components/cockpit-layout";
 import { PageNav } from "@/components/page-nav";
 import { getPageByHref } from "@/lib/pages";
+import { VideoEmbed } from "@/components/video-embed";
 
 const HREF = "/flow";
 
@@ -153,29 +154,7 @@ export default function FlowPage() {
             這不是模擬，是 <span className="text-[#8a6b3f]">RoomDreaming</span> 每天在服務設計師的產品。
           </div>
 
-          {/* VideoEmbed placeholder — 待 URL 替換 */}
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#2a2723] via-[#1b1a17] to-[#0e0d0b] shadow-2xl shadow-[#8a6b3f]/15 flex items-center justify-center">
-            <div className="text-center px-8">
-              <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center mx-auto mb-4 border border-white/20">
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="rgba(255,255,255,0.6)"
-                  className="ml-1"
-                  aria-hidden
-                >
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-              <div className="text-white/80 text-sm tracking-widest uppercase">
-                影片即將嵌入
-              </div>
-              <div className="text-white/50 text-xs mt-2">
-                RoomDreaming 產品 demo · 等 YouTube URL
-              </div>
-            </div>
-          </div>
+          <VideoEmbed src="/video/roomdreaming-demo.mp4" />
         </motion.div>
 
         {/* 30s promise banner */}
