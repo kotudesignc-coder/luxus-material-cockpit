@@ -49,10 +49,10 @@ function TraditionalPanel() {
 function AIPanel() {
   return (
     <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-[#e8dfd1]">
-      {/* LUXUS PETHRA 月亮雕塑牆案場 — 設計師夢寐以求的渲圖效果 */}
+      {/* LUXUS PETHRA 月亮雕塑牆案場：手持 RENDER 稿 vs 真實空間 */}
       <Image
-        src="/luxus/compare-after-pethra.jpg"
-        alt="LUXUS PETHRA 案場：米色塗料牆面 + 月亮雕塑 + 曲面沙發"
+        src="/luxus/compare-after-render.jpg"
+        alt="設計師手持過去努力製作的 3D 渲圖稿，對照真實 LUXUS PETHRA 案場空間"
         fill
         className="object-cover"
         sizes="50vw"
