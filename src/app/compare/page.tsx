@@ -114,6 +114,9 @@ export default function ComparePage() {
                   linesStyle={{ background: "rgba(255,255,255,0.85)" }}
                 />
               }
+              // 預設拉桿偏右（85%）→「選樣」黑白樣品佔畫面 85%，
+              // 右側露 15% 彩色空間當鉤子，引導觀眾拖動揭示完整空間。
+              defaultPosition={85}
               style={{ position: "absolute", inset: 0, height: "100%", width: "100%" }}
             />
           </div>
