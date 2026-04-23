@@ -125,13 +125,13 @@ export function useStudentSync(
           const data = (await res.json()) as SessionState;
           setError(null);
           setState(data);
-          setStatus({
+          setStatus((s) => ({
             lastPollAt: Date.now(),
             lastServerHref: data.currentHref,
-            count: status.count + 1,
-          });
+            count: s.count + 1,
+          }));
           // eslint-disable-next-line no-console
-          console.log("[poll]", data.currentHref, data.status);
+          console.log("[poll ok]", data.currentHref, data.status);
           if (data.status === "ended") {
             stoppedRef.current = true;
           }

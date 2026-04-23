@@ -71,6 +71,8 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
 
       // 1. URL 有 join → 學員
       if (join && isValidSessionId(join)) {
+        // eslint-disable-next-line no-console
+        console.log("[sync] → student (url join)", join);
         setStudentJoinId(join);
         setIsLecture(false);
         setSessionId(null);
@@ -106,38 +108,61 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       }
       // 3. URL 沒 query → 用 localStorage 還原身份
       if (ls.role === "lecturer" && isValidSessionId(ls.id)) {
+        // eslint-disable-next-line no-console
+        console.log("[sync] → lecturer (from localStorage)", ls.id);
         setIsLecture(true);
         setSessionId(ls.id);
         setStudentJoinId(null);
         return;
       }
       if (ls.role === "student" && isValidSessionId(ls.id)) {
+        // eslint-disable-next-line no-console
+        console.log("[sync] → student (from localStorage)", ls.id);
         setStudentJoinId(ls.id);
         setIsLecture(false);
         setSessionId(null);
         return;
       }
       // 4. 什麼都沒有 → 自由模式
+      // eslint-disable-next-line no-console
+      console.log("[sync] → free (no url query, no ls)", { ls });
       setIsLecture(false);
       setSessionId(null);
       setStudentJoinId(null);
     };
+    // eslint-disable-next-line no-console
+    console.log("[sync] running, url=", window.location.href);
     sync();
     setMounted(true);
     window.addEventListener("popstate", sync);
     return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  // ----- 講師廣播：每次 currentHref 變化就 POST 到 Redis -----
+  // ----- 講師廣播：useEffect 觸發 + heartbeat 雙保險 -----
   const {
     broadcast,
     endSession,
     status: lecturerStatus,
   } = useLecturerSync(sessionId);
+
+  // (1) currentHref / sessionId 變化時立刻廣播一次
   useEffect(() => {
     if (!isLecture || !sessionId || !currentHref) return;
+    // eslint-disable-next-line no-console
+    console.log(
+      "[broadcast useEffect] trigger",
+      { isLecture, sessionId, currentHref },
+    );
     broadcast(currentHref);
-    // broadcast 是 async；fire and forget，錯誤會被 hook 內 console.warn
+  }, [isLecture, sessionId, currentHref, broadcast]);
+
+  // (2) Heartbeat：講師模式下每 1.5 秒自動補發一次，避免狀態轉換時機 miss
+  useEffect(() => {
+    if (!isLecture || !sessionId || !currentHref) return;
+    const iv = setInterval(() => {
+      broadcast(currentHref);
+    }, 1500);
+    return () => clearInterval(iv);
   }, [isLecture, sessionId, currentHref, broadcast]);
 
   // ----- 學員訂閱：polling Redis，講師翻頁時跟著 router.push -----
