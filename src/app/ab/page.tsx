@@ -109,12 +109,13 @@ export default function ABPage() {
             </span>
           </div>
           <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4vw,3.75rem)] leading-[1.2] font-medium tracking-tight max-w-3xl">
-            同一個空間，
-            <span className="text-[#8a6b3f]">兩種表情。</span>
+            <span className="text-[#8a6b3f]">塗料東西軍</span>，
+            你要哪一邊？
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
+            客戶猶豫不決時的二擇一 —
             A 是墨林青的沉，B 是侘寂橘的暖。
-            客戶講不清楚的差別，拉一下就懂 — 選色不是講道理，是看感覺。
+            拉一下就懂，不用再講道理。
           </p>
         </div>
 
