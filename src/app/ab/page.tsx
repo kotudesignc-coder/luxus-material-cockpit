@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   ReactCompareSlider,
   ReactCompareSliderHandle,
 } from "react-compare-slider";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { CockpitLayout } from "@/components/cockpit-layout";
 import { PageNav } from "@/components/page-nav";
 import { getPageByHref } from "@/lib/pages";
@@ -91,6 +91,13 @@ export default function ABPage() {
     else setColorBId(id);
   }
 
+  // 頁面載入時顯示「拖拖看」浮動提示，觀眾有互動後或 4 秒後自動消失
+  const [hintVisible, setHintVisible] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setHintVisible(false), 4000);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <CockpitLayout currentHref={HREF}>
       <section className="flex-1 px-6 md:px-12 py-16 md:py-20 max-w-[1400px] mx-auto w-full">
@@ -121,7 +128,10 @@ export default function ABPage() {
           transition={{ duration: 0.7 }}
           className="rounded-3xl overflow-hidden shadow-2xl shadow-[#8a6b3f]/15 border border-[#1b1a17]/5"
         >
-          <div className="relative aspect-[16/9] w-full">
+          <div
+            className="relative aspect-[16/9] w-full"
+            onPointerDown={() => setHintVisible(false)}
+          >
             <ReactCompareSlider
               itemOne={<MockRoom color={colorA} label="A" labelPosition="left" />}
               itemTwo={<MockRoom color={colorB} label="B" labelPosition="right" />}
@@ -144,6 +154,33 @@ export default function ABPage() {
                 width: "100%",
               }}
             />
+
+            {/* 「拖拖看」浮動提示：載入時左右晃動 4 秒後消失，或觀眾一碰就消失 */}
+            <AnimatePresence>
+              {hintVisible && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.4 }}
+                  className="absolute inset-x-0 top-1/2 -translate-y-[calc(50%+3rem)] flex justify-center pointer-events-none z-20"
+                >
+                  <motion.div
+                    animate={{ x: [0, 14, -14, 14, -14, 0] }}
+                    transition={{
+                      duration: 1.6,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#1b1a17]/85 text-[#f7f3ee] text-sm backdrop-blur shadow-lg"
+                  >
+                    <span className="text-base">←</span>
+                    <span className="tracking-wider">拖拖看</span>
+                    <span className="text-base">→</span>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
 
