@@ -175,6 +175,12 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
         // eslint-disable-next-line no-console
         console.warn("[session bootstrap failed]", err);
       }
+      // 🔴 關鍵：toggleMode 路徑要**自己寫 localStorage**，不靠 sync useEffect
+      // （因為 router.push 同 pathname 時不會重 mount，sync 不會再跑）
+      try {
+        localStorage.setItem("cockpit-role", "lecturer");
+        localStorage.setItem("cockpit-session", newId);
+      } catch {}
       setIsLecture(true);
       setSessionId(newId);
       router.push(`${base}?mode=lecture&session=${newId}`);
