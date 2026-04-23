@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
-import { PAGES } from "@/lib/pages";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { PAGES, getNeighbors } from "@/lib/pages";
 
 type Props = {
   children: ReactNode;
@@ -42,13 +42,13 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
     return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  const toggleMode = () => {
+  const toggleMode = useCallback(() => {
     const nextLecture = !isLecture;
     setIsLecture(nextLecture);
     const base = currentHref || "/";
     const url = nextLecture ? `${base}?mode=lecture` : base;
     router.push(url);
-  };
+  }, [isLecture, currentHref, router]);
 
   const currentIndex = currentHref
     ? PAGES.findIndex((p) => p.href === currentHref)
@@ -59,8 +59,83 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   // 未 mount 時固定走自由模式，避免 SSR/CSR 不一致閃爍
   const showLectureHeader = mounted && isLecture;
 
+  // ----- 講師模式：鍵盤翻頁 -----
+  useEffect(() => {
+    if (!showLectureHeader || !currentHref) return;
+    const { prev, next } = getNeighbors(currentHref);
+    const modeSuffix = "?mode=lecture";
+
+    const onKey = (e: KeyboardEvent) => {
+      // 避免在 input / textarea / contenteditable 搶 focus
+      const t = e.target as HTMLElement;
+      if (
+        t.tagName === "INPUT" ||
+        t.tagName === "TEXTAREA" ||
+        t.isContentEditable
+      ) {
+        return;
+      }
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+        if (next) {
+          e.preventDefault();
+          router.push(next.href + modeSuffix);
+        }
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        if (prev) {
+          e.preventDefault();
+          router.push(prev.href + modeSuffix);
+        }
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        router.push("/" + modeSuffix);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        router.push(PAGES[PAGES.length - 1].href + modeSuffix);
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        toggleMode();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showLectureHeader, currentHref, router, toggleMode]);
+
+  // ----- 講師模式：滑鼠靜止 2.5 秒自動隱藏游標 -----
+  const [cursorHidden, setCursorHidden] = useState(false);
+  useEffect(() => {
+    if (!showLectureHeader) {
+      setCursorHidden(false);
+      return;
+    }
+    let timer: ReturnType<typeof setTimeout>;
+    const resetTimer = () => {
+      setCursorHidden(false);
+      clearTimeout(timer);
+      timer = setTimeout(() => setCursorHidden(true), 2500);
+    };
+    resetTimer();
+    window.addEventListener("mousemove", resetTimer);
+    window.addEventListener("mousedown", resetTimer);
+    window.addEventListener("keydown", resetTimer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("mousemove", resetTimer);
+      window.removeEventListener("mousedown", resetTimer);
+      window.removeEventListener("keydown", resetTimer);
+    };
+  }, [showLectureHeader]);
+
+  const { prev, next } = currentHref
+    ? getNeighbors(currentHref)
+    : { prev: undefined, next: undefined };
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f3ee] text-[#1b1a17]">
+    <div
+      className={`min-h-screen flex flex-col bg-[#f7f3ee] text-[#1b1a17] ${
+        cursorHidden ? "cursor-none" : ""
+      }`}
+      data-mode={showLectureHeader ? "lecture" : "free"}
+    >
       {/* Top nav — lecture 模式下極簡化 */}
       {!showLectureHeader ? (
         <header className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-[#1b1a17]/5">
@@ -115,6 +190,26 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
           <span>© 2026 可塗設計．與 LUXUS × RoomDreaming 合作出品</span>
           <span>v0.1.0 · 說明會版</span>
         </footer>
+      )}
+
+      {/* 講師模式專用：左下角浮動 HUD（頁碼 + 翻頁提示） */}
+      {showLectureHeader && currentIndex >= 0 && (
+        <div className="fixed bottom-5 left-5 z-40 flex flex-col gap-2 text-[10px] tracking-[0.3em] uppercase text-[#8a7f72] pointer-events-none select-none">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1b1a17]/85 text-[#c9a882] backdrop-blur shadow-lg">
+            <span>{String(currentIndex + 1).padStart(2, "0")}</span>
+            <span className="opacity-50">/</span>
+            <span>{String(PAGES.length).padStart(2, "0")}</span>
+          </div>
+          <div className="px-3 py-1.5 rounded-full bg-[#1b1a17]/60 text-[#f7f3ee]/70 backdrop-blur text-[9px]">
+            {prev && "← "}
+            {prev ? "上一頁" : "首頁"}
+            <span className="mx-2 opacity-40">·</span>
+            {next ? "下一頁 " : "最末頁"}
+            {next && "→"}
+            <span className="mx-2 opacity-40">·</span>
+            ESC 退出
+          </div>
+        </div>
       )}
     </div>
   );
