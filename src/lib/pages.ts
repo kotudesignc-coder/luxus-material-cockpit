@@ -41,12 +41,6 @@ export const PAGES: CockpitPage[] = [
     pdfPage: "p.09+10+11",
   },
   {
-    href: "/flow",
-    title: "三步驟把顏色貼上你家",
-    tag: "系統操作",
-    pdfPage: "p.16",
-  },
-  {
     href: "/colors",
     title: "LUXUS 色票",
     tag: "核心體驗",
@@ -59,6 +53,12 @@ export const PAGES: CockpitPage[] = [
     tag: "殺手鐧",
     pdfPage: "p.21",
     hero: true,
+  },
+  {
+    href: "/flow",
+    title: "三步驟把顏色貼上你家",
+    tag: "系統操作 · 實機 demo",
+    pdfPage: "p.16",
   },
   {
     href: "/recommend",
