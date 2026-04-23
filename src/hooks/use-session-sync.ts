@@ -19,6 +19,15 @@ export type LecturerStatus = {
   count: number;
 };
 
+/** dev-only log，production 靜音 */
+const isDev = process.env.NODE_ENV !== "production";
+const devLog = (...args: unknown[]) => {
+  if (isDev) {
+    // eslint-disable-next-line no-console
+    console.log(...args);
+  }
+};
+
 /**
  * 講師端：提供 broadcast / endSession，把當前頁面廣播到 Redis。
  * 呼叫者在每次 router 變化後呼叫 broadcast(newHref) 即可。
@@ -48,8 +57,7 @@ export function useLecturerSync(sessionId: string | null) {
           setStatus((s) => ({ ...s, lastError: msg }));
           return;
         }
-        // eslint-disable-next-line no-console
-        console.log("[broadcast ok]", currentHref, sessionId);
+        devLog("[broadcast ok]", currentHref, sessionId);
         setStatus((s) => ({
           lastHref: currentHref,
           lastAt: Date.now(),
@@ -130,8 +138,7 @@ export function useStudentSync(
             lastServerHref: data.currentHref,
             count: s.count + 1,
           }));
-          // eslint-disable-next-line no-console
-          console.log("[poll ok]", data.currentHref, data.status);
+          devLog("[poll ok]", data.currentHref, data.status);
           if (data.status === "ended") {
             stoppedRef.current = true;
           }

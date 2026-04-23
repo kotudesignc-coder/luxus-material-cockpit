@@ -29,7 +29,17 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [studentJoinId, setStudentJoinId] = useState<string | null>(null);
   const [adminVisible, setAdminVisible] = useState(false);
+  const [debugVisible, setDebugVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // dev-only log，production 靜音
+  const isDev = process.env.NODE_ENV !== "production";
+  const devLog = (...args: unknown[]) => {
+    if (isDev) {
+      // eslint-disable-next-line no-console
+      console.log(...args);
+    }
+  };
 
   // ----- 初始化：讀 URL query + localStorage 備援判斷身份 -----
   //
@@ -59,6 +69,20 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       try {
         setAdminVisible(localStorage.getItem("cockpit-admin") === "1");
       } catch {}
+      // debug HUD 開關：URL ?debug=1 喚出，存 localStorage 這裝置以後常顯示
+      if (params.get("debug") === "1") {
+        try {
+          localStorage.setItem("cockpit-debug", "1");
+        } catch {}
+      }
+      if (params.get("debug") === "0") {
+        try {
+          localStorage.removeItem("cockpit-debug");
+        } catch {}
+      }
+      try {
+        setDebugVisible(localStorage.getItem("cockpit-debug") === "1");
+      } catch {}
 
       // --- 決定身份，URL 優先，localStorage 備援 ---
       let ls = { role: "", id: "" };
@@ -71,8 +95,7 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
 
       // 1. URL 有 join → 學員
       if (join && isValidSessionId(join)) {
-        // eslint-disable-next-line no-console
-        console.log("[sync] → student (url join)", join);
+        devLog("[sync] → student (url join)", join);
         setStudentJoinId(join);
         setIsLecture(false);
         setSessionId(null);
@@ -108,30 +131,26 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       }
       // 3. URL 沒 query → 用 localStorage 還原身份
       if (ls.role === "lecturer" && isValidSessionId(ls.id)) {
-        // eslint-disable-next-line no-console
-        console.log("[sync] → lecturer (from localStorage)", ls.id);
+        devLog("[sync] → lecturer (from localStorage)", ls.id);
         setIsLecture(true);
         setSessionId(ls.id);
         setStudentJoinId(null);
         return;
       }
       if (ls.role === "student" && isValidSessionId(ls.id)) {
-        // eslint-disable-next-line no-console
-        console.log("[sync] → student (from localStorage)", ls.id);
+        devLog("[sync] → student (from localStorage)", ls.id);
         setStudentJoinId(ls.id);
         setIsLecture(false);
         setSessionId(null);
         return;
       }
       // 4. 什麼都沒有 → 自由模式
-      // eslint-disable-next-line no-console
-      console.log("[sync] → free (no url query, no ls)", { ls });
+      devLog("[sync] → free (no url query, no ls)", { ls });
       setIsLecture(false);
       setSessionId(null);
       setStudentJoinId(null);
     };
-    // eslint-disable-next-line no-console
-    console.log("[sync] running, url=", window.location.href);
+    devLog("[sync] running, url=", window.location.href);
     sync();
     setMounted(true);
     window.addEventListener("popstate", sync);
@@ -148,11 +167,11 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   // (1) currentHref / sessionId 變化時立刻廣播一次
   useEffect(() => {
     if (!isLecture || !sessionId || !currentHref) return;
-    // eslint-disable-next-line no-console
-    console.log(
-      "[broadcast useEffect] trigger",
-      { isLecture, sessionId, currentHref },
-    );
+    devLog("[broadcast useEffect] trigger", {
+      isLecture,
+      sessionId,
+      currentHref,
+    });
     broadcast(currentHref);
   }, [isLecture, sessionId, currentHref, broadcast]);
 
@@ -495,8 +514,8 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       )}
 
 
-      {/* 🔬 同步 debug HUD — 只在 lecturer / student 模式顯示，右下角 */}
-      {(role === "lecturer" || role === "student") && (
+      {/* 🔬 同步 debug HUD — 需要 ?debug=1 開啟（localStorage 記住），預設隱藏 */}
+      {debugVisible && (role === "lecturer" || role === "student") && (
         <div className="fixed bottom-5 right-5 z-50 pointer-events-none select-none max-w-[280px]">
           <div className="px-3 py-2 rounded-lg bg-black/80 text-white text-[10px] font-mono leading-tight backdrop-blur shadow-lg space-y-1">
             <div className="text-[#c9a882] tracking-widest uppercase text-[9px]">
