@@ -35,12 +35,6 @@ export const PAGES: CockpitPage[] = [
     pdfPage: "p.05",
   },
   {
-    href: "/photo-guide",
-    title: "怎麼拍好一張空間照",
-    tag: "拍攝指引",
-    pdfPage: "p.09+10+11",
-  },
-  {
     href: "/colors",
     title: "LUXUS 色票",
     tag: "核心體驗",
@@ -59,6 +53,12 @@ export const PAGES: CockpitPage[] = [
     title: "三步驟把顏色貼上你家",
     tag: "系統操作 · 實機 demo",
     pdfPage: "p.16",
+  },
+  {
+    href: "/photo-guide",
+    title: "怎麼拍好一張空間照",
+    tag: "上手前的 tips",
+    pdfPage: "p.09+10+11",
   },
   {
     href: "/recommend",
