@@ -224,16 +224,13 @@ export default function ABPage() {
           transition={{ delay: 0.5, duration: 0.7 }}
           className="mt-10 md:mt-12 p-6 md:p-8 rounded-2xl bg-[#1b1a17] text-[#f7f3ee]"
         >
-          <div className="text-xs tracking-[0.4em] uppercase text-[#c9a882] mb-3">
-            現場話術
-          </div>
           <p className="font-[family-name:var(--font-serif-tc)] text-xl md:text-2xl leading-relaxed">
             「A 是
-            <span className="text-[#c9a882]">{LEFT.nameZh}</span>，森林的那種沉；
-            B 是
-            <span className="text-[#c9a882]">{RIGHT.nameZh}</span>，土地的那種暖。
+            <span className="text-[#c9a882]">林青霞</span>
+            ，B 是
+            <span className="text-[#c9a882]">鍾楚紅</span>。
             <br />
-            您的家，想要哪一種氛圍？」
+            你更喜歡哪一個？」
           </p>
         </motion.div>
 
