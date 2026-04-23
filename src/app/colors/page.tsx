@@ -10,9 +10,124 @@ import { COLORS, FAMILIES, ROOMS, type Color } from "@/lib/colors";
 const HREF = "/colors";
 
 /**
- * 空間預覽 — 目前用「主牆純色 + 地板漸層 + 傢俱剪影」mock 出 AI 貼色的效果。
- * 真空間照到位後，把 room.photoSrc 填進來，這個組件會切成照片 + 色彩疊加模式。
+ * 每間房的「室內配置剪影」— 主牆色由色票決定，剪影是不同房型的辨識特徵。
+ * 真空間照到位後可改用 photoSrc + blend-mode 模式。
  */
+function RoomFurnishings({ roomId }: { roomId: string }) {
+  switch (roomId) {
+    case "livingroom":
+      return (
+        <>
+          {/* 落地窗（右側大） */}
+          <div className="absolute top-[12%] right-[8%] w-[30%] h-[58%] bg-white/30 rounded-sm ring-8 ring-white/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent" />
+            <div className="absolute top-1/2 inset-x-0 h-[1px] bg-white/40" />
+          </div>
+          {/* 沙發 */}
+          <div className="absolute bottom-[22%] left-[10%] right-[44%] h-[32%]">
+            <div className="absolute bottom-0 inset-x-0 h-[55%] bg-black/22 rounded-xl backdrop-blur-sm" />
+            <div className="absolute bottom-[55%] inset-x-3 h-[45%] bg-black/16 rounded-t-xl" />
+          </div>
+          {/* 茶几 */}
+          <div className="absolute bottom-[24%] left-[44%] w-[14%] h-[10%] bg-black/20 rounded-sm" />
+        </>
+      );
+    case "bedroom":
+      return (
+        <>
+          {/* 小窗（右上） */}
+          <div className="absolute top-[15%] right-[12%] w-[20%] h-[26%] bg-white/30 rounded-sm ring-6 ring-white/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/55 to-transparent" />
+          </div>
+          {/* 床頭板 */}
+          <div className="absolute bottom-[24%] left-[18%] right-[18%] h-[28%]">
+            <div className="absolute bottom-0 inset-x-0 h-[60%] bg-black/15 rounded-t-md" />
+          </div>
+          {/* 床墊 */}
+          <div className="absolute bottom-[22%] left-[14%] right-[14%] h-[14%] bg-white/40 rounded-sm" />
+          {/* 床頭燈（左） */}
+          <div className="absolute bottom-[36%] left-[10%] w-[6%] h-[14%]">
+            <div className="absolute top-0 inset-x-0 h-[55%] bg-white/55 rounded-t-full" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-[45%] bg-black/20" />
+          </div>
+        </>
+      );
+    case "kitchen":
+      return (
+        <>
+          {/* 上櫃連排 */}
+          <div className="absolute top-[18%] left-[10%] right-[10%] h-[16%] bg-black/12 rounded-sm">
+            <div className="absolute inset-y-0 left-1/3 w-[1px] bg-white/20" />
+            <div className="absolute inset-y-0 left-2/3 w-[1px] bg-white/20" />
+          </div>
+          {/* 抽油煙機 */}
+          <div className="absolute top-[34%] left-1/2 -translate-x-1/2 w-[18%] h-[8%] bg-black/22 rounded-sm" />
+          {/* 中島 */}
+          <div className="absolute bottom-[20%] left-[14%] right-[14%] h-[26%]">
+            <div className="absolute bottom-0 inset-x-0 h-[80%] bg-black/22 rounded-md" />
+            <div className="absolute top-0 inset-x-0 h-[15%] bg-white/30 rounded-t-sm" />
+          </div>
+        </>
+      );
+    case "bathroom":
+      return (
+        <>
+          {/* 圓鏡 */}
+          <div className="absolute top-[16%] left-1/2 -translate-x-1/2 w-[26%] aspect-square bg-white/35 rounded-full ring-4 ring-white/15">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent rounded-full" />
+          </div>
+          {/* 洗手台檯面 */}
+          <div className="absolute bottom-[22%] left-[18%] right-[18%] h-[14%] bg-white/45 rounded-sm" />
+          {/* 洗手台下方櫃 */}
+          <div className="absolute bottom-[22%] left-[24%] right-[24%] -translate-y-1 h-[12%] bg-black/18" />
+          {/* 水龍頭 */}
+          <div className="absolute bottom-[36%] left-1/2 -translate-x-1/2 w-[2px] h-[6%] bg-black/40" />
+        </>
+      );
+    case "diningroom":
+      return (
+        <>
+          {/* 吊燈 */}
+          <div className="absolute top-[6%] left-1/2 -translate-x-1/2 w-[1px] h-[20%] bg-black/30" />
+          <div className="absolute top-[24%] left-1/2 -translate-x-1/2 w-[24%] h-[6%] bg-black/30 rounded-b-full">
+            <div className="absolute -bottom-1 inset-x-2 h-[60%] bg-[#c9a882]/40 rounded-b-full blur-sm" />
+          </div>
+          {/* 落地窗（左後） */}
+          <div className="absolute top-[14%] left-[8%] w-[22%] h-[44%] bg-white/30 rounded-sm ring-6 ring-white/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/55 to-transparent" />
+          </div>
+          {/* 餐桌 */}
+          <div className="absolute bottom-[18%] left-[14%] right-[14%] h-[18%]">
+            <div className="absolute top-0 inset-x-0 h-[40%] bg-black/22 rounded-sm" />
+            <div className="absolute bottom-0 left-[8%] w-[2px] h-[60%] bg-black/30" />
+            <div className="absolute bottom-0 right-[8%] w-[2px] h-[60%] bg-black/30" />
+          </div>
+        </>
+      );
+    case "foyer":
+      return (
+        <>
+          {/* 窄高窗 */}
+          <div className="absolute top-[10%] right-[14%] w-[10%] h-[60%] bg-white/30 rounded-sm ring-4 ring-white/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/55 to-transparent" />
+          </div>
+          {/* 全身鏡 */}
+          <div className="absolute top-[18%] left-[14%] w-[12%] h-[56%] bg-white/35 rounded-md ring-4 ring-white/15">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/45 to-transparent rounded-md" />
+          </div>
+          {/* 鞋櫃 */}
+          <div className="absolute bottom-[22%] left-[34%] right-[28%] h-[18%] bg-black/22 rounded-sm">
+            <div className="absolute inset-y-0 left-1/2 w-[1px] bg-white/15" />
+          </div>
+          {/* 掛鉤橫桿 */}
+          <div className="absolute top-[20%] left-[34%] right-[28%] h-[2px] bg-black/30" />
+        </>
+      );
+    default:
+      return null;
+  }
+}
+
 function RoomPreview({
   color,
   room,
@@ -35,22 +150,22 @@ function RoomPreview({
       {/* top natural light wash */}
       <div className="absolute top-0 left-0 right-0 h-[45%] bg-gradient-to-b from-white/25 to-transparent" />
 
-      {/* window */}
-      <div className="absolute top-[14%] right-[10%] w-[28%] h-[34%] bg-white/30 rounded-sm ring-8 ring-white/10">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent" />
-      </div>
-
       {/* baseboard line */}
       <div className="absolute bottom-[24%] left-0 right-0 h-[1.5px] bg-black/10" />
 
       {/* floor */}
       <div className="absolute bottom-0 left-0 right-0 h-[24%] bg-gradient-to-b from-[#8a6b3f]/25 to-[#4a463f]/45" />
 
-      {/* sofa (living), bed (bed), island (kitchen) silhouette */}
-      <div className="absolute bottom-[22%] left-[14%] right-[18%] h-[32%]">
-        <div className="absolute bottom-0 inset-x-0 h-[55%] bg-black/20 rounded-xl backdrop-blur-sm" />
-        <div className="absolute bottom-[55%] inset-x-4 h-[45%] bg-black/15 rounded-t-xl" />
-      </div>
+      {/* room-specific furnishings（放最上層、每次切換有 fade in） */}
+      <motion.div
+        key={room.id}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="absolute inset-0 pointer-events-none"
+      >
+        <RoomFurnishings roomId={room.id} />
+      </motion.div>
 
       {/* room label */}
       <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/85 backdrop-blur text-[11px] tracking-widest uppercase text-[#1b1a17]">
