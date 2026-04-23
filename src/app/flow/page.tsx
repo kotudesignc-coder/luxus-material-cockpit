@@ -76,8 +76,8 @@ export default function FlowPage() {
             {page.pdfPage} · {page.tag}
           </div>
           <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4vw,3.75rem)] leading-[1.2] font-medium tracking-tight max-w-4xl">
-            痛點和夢想工具，
-            <span className="text-[#8a6b3f]">我們真的做到了。</span>
+            AI 的出現，
+            <span className="text-[#8a6b3f]">讓夢想工具成真。</span>
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
             下面是示範影片。
