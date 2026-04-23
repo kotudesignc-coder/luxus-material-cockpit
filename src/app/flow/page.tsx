@@ -139,12 +139,51 @@ export default function FlowPage() {
           ))}
         </div>
 
+        {/* 真實 demo 影片版位 — 等 YouTube URL 進來後替換為 <VideoEmbed /> */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.7 }}
+          className="mt-16 md:mt-20"
+        >
+          <div className="text-xs tracking-[0.4em] uppercase text-[#8a7f72] mb-3">
+            看真的在跑
+          </div>
+          <div className="font-[family-name:var(--font-serif-tc)] text-2xl md:text-3xl font-medium mb-6">
+            這不是模擬，是 <span className="text-[#8a6b3f]">RoomDreaming</span> 每天在服務設計師的產品。
+          </div>
+
+          {/* VideoEmbed placeholder — 待 URL 替換 */}
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#2a2723] via-[#1b1a17] to-[#0e0d0b] shadow-2xl shadow-[#8a6b3f]/15 flex items-center justify-center">
+            <div className="text-center px-8">
+              <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center mx-auto mb-4 border border-white/20">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="rgba(255,255,255,0.6)"
+                  className="ml-1"
+                  aria-hidden
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+              <div className="text-white/80 text-sm tracking-widest uppercase">
+                影片即將嵌入
+              </div>
+              <div className="text-white/50 text-xs mt-2">
+                RoomDreaming 產品 demo · 等 YouTube URL
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* 30s promise banner */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.7 }}
-          className="mt-16 md:mt-20 p-8 md:p-10 rounded-3xl bg-gradient-to-r from-[#1b1a17] to-[#4a463f] text-center"
+          transition={{ delay: 0.9, duration: 0.7 }}
+          className="mt-12 md:mt-16 p-8 md:p-10 rounded-3xl bg-gradient-to-r from-[#1b1a17] to-[#4a463f] text-center"
         >
           <div className="text-xs tracking-[0.4em] uppercase text-[#c9a882] mb-3">
             Total
