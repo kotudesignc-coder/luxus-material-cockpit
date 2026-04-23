@@ -71,17 +71,38 @@ export default function FlowPage() {
   return (
     <CockpitLayout currentHref={HREF}>
       <section className="flex-1 px-6 md:px-12 py-16 md:py-20 max-w-[1400px] mx-auto w-full">
-        <div className="mb-12 md:mb-16 text-center md:text-left">
+        <div className="mb-10 md:mb-14 text-center md:text-left">
           <div className="text-xs tracking-[0.4em] uppercase text-[#8a7f72] mb-4">
             {page.pdfPage} · {page.tag}
           </div>
-          <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4vw,3.75rem)] leading-[1.2] font-medium tracking-tight">
-            三步驟，
-            <span className="text-[#8a6b3f]">把顏色貼上你家</span>
+          <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4vw,3.75rem)] leading-[1.2] font-medium tracking-tight max-w-4xl">
+            痛點和夢想工具，
+            <span className="text-[#8a6b3f]">我們真的做到了。</span>
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
-            整套流程一張圖就講完。每一步都可以直接跳進去玩，不用照順序走。
+            下面是示範影片。
           </p>
+        </div>
+
+        {/* 影片先登場（證據） */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="mb-16 md:mb-20"
+        >
+          <VideoEmbed src="/video/roomdreaming-demo.mp4" />
+        </motion.div>
+
+        {/* 三步驟 — 影片底下 */}
+        <div className="mb-8 md:mb-10 text-center md:text-left">
+          <div className="text-xs tracking-[0.4em] uppercase text-[#8a7f72] mb-3">
+            影片下面
+          </div>
+          <h2 className="font-[family-name:var(--font-serif-tc)] text-3xl md:text-4xl font-medium tracking-tight">
+            三步驟，
+            <span className="text-[#8a6b3f]">顏色隨你貼。</span>
+          </h2>
         </div>
 
         {/* Flow timeline */}
@@ -139,23 +160,6 @@ export default function FlowPage() {
             </motion.div>
           ))}
         </div>
-
-        {/* 真實 demo 影片版位 — 等 YouTube URL 進來後替換為 <VideoEmbed /> */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.7 }}
-          className="mt-16 md:mt-20"
-        >
-          <div className="text-xs tracking-[0.4em] uppercase text-[#8a7f72] mb-3">
-            看真的在跑
-          </div>
-          <div className="font-[family-name:var(--font-serif-tc)] text-2xl md:text-3xl font-medium mb-6">
-            這不是模擬，是 <span className="text-[#8a6b3f]">RoomDreaming</span> 每天在服務設計師的產品。
-          </div>
-
-          <VideoEmbed src="/video/roomdreaming-demo.mp4" />
-        </motion.div>
 
         {/* 30s promise banner */}
         <motion.div
