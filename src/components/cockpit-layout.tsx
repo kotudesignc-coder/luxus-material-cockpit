@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Suspense, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
 import { PAGES } from "@/lib/pages";
 
 type Props = {
@@ -15,14 +15,40 @@ type Props = {
 
 /**
  * 講師模式 (`?mode=lecture`)：
- * - 隱藏頂部品牌列與自由/講師切換
- * - 頁面沉浸感更強，主講用
+ * - header 換成極簡 pill「講師模式 · Lecture / 退出 ↗」
+ * - 隱藏 footer、progress 細條保留
+ * - 主講投影時用，沉浸感更強
  * 自由模式（預設）：
- * - 顯示所有導覽（散會後觀眾自己玩）
+ * - 完整 header 含品牌列 + 講師模式 toggle + footer
+ *
+ * 實作：URL query 是 source of truth（可分享連結），
+ * 用 useState + 初始讀 URL + 點擊時同步 router.push + setState
+ * 避開 Next.js Link 在 query-only 變化不觸發 re-render 的問題。
  */
-function CockpitLayoutInner({ children, currentHref, isHome = false }: Props) {
-  const searchParams = useSearchParams();
-  const isLecture = searchParams?.get("mode") === "lecture";
+export function CockpitLayout({ children, currentHref, isHome = false }: Props) {
+  const router = useRouter();
+  const [isLecture, setIsLecture] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // 初次 mount 時讀 URL，之後監聽 popstate（上一頁/下一頁）
+  useEffect(() => {
+    const sync = () => {
+      const params = new URLSearchParams(window.location.search);
+      setIsLecture(params.get("mode") === "lecture");
+    };
+    sync();
+    setMounted(true);
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
+
+  const toggleMode = () => {
+    const nextLecture = !isLecture;
+    setIsLecture(nextLecture);
+    const base = currentHref || "/";
+    const url = nextLecture ? `${base}?mode=lecture` : base;
+    router.push(url);
+  };
 
   const currentIndex = currentHref
     ? PAGES.findIndex((p) => p.href === currentHref)
@@ -30,10 +56,13 @@ function CockpitLayoutInner({ children, currentHref, isHome = false }: Props) {
   const progress =
     currentIndex >= 0 ? ((currentIndex + 1) / PAGES.length) * 100 : 0;
 
+  // 未 mount 時固定走自由模式，避免 SSR/CSR 不一致閃爍
+  const showLectureHeader = mounted && isLecture;
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f3ee] text-[#1b1a17]">
       {/* Top nav — lecture 模式下極簡化 */}
-      {!isLecture ? (
+      {!showLectureHeader ? (
         <header className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-[#1b1a17]/5">
           <Link
             href="/"
@@ -41,33 +70,29 @@ function CockpitLayoutInner({ children, currentHref, isHome = false }: Props) {
           >
             LUXUS × RoomDreaming × 可塗設計
           </Link>
-          <nav className="flex items-center gap-5 text-sm">
-            <Link
-              href={currentHref ? `${currentHref}?mode=free` : "/?mode=free"}
-              className="text-[#1b1a17] hover:text-[#8a7f72] transition"
-            >
-              自由探索
-            </Link>
-            <Link
-              href={currentHref ? `${currentHref}?mode=lecture` : "/?mode=lecture"}
-              className="rounded-full border border-[#1b1a17] px-4 py-1.5 text-[#1b1a17] hover:bg-[#1b1a17] hover:text-[#f7f3ee] transition"
-            >
-              講師模式
-            </Link>
-          </nav>
+          <button
+            type="button"
+            onClick={toggleMode}
+            className="rounded-full border border-[#1b1a17] px-4 py-1.5 text-sm text-[#1b1a17] hover:bg-[#1b1a17] hover:text-[#f7f3ee] transition"
+            title="切換為講師主講模式（隱藏導覽，沉浸感）"
+          >
+            講師模式
+          </button>
         </header>
       ) : (
-        // lecture 模式：只保留一個極細的離開入口
-        <header className="flex items-center justify-between px-6 md:px-12 py-3 border-b border-[#1b1a17]/5">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-[#8a6b3f]">
+        // lecture 模式：極細頂列 + 紅點 LIVE 印章 + 退出
+        <header className="flex items-center justify-between px-6 md:px-12 py-3 border-b border-[#1b1a17]/10 bg-[#1b1a17] text-[#f7f3ee]">
+          <span className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase">
+            <span className="w-2 h-2 rounded-full bg-[#c9a882] animate-pulse" />
             講師模式 · Lecture
           </span>
-          <Link
-            href={currentHref ? `${currentHref}?mode=free` : "/"}
-            className="text-[10px] tracking-[0.3em] uppercase text-[#8a7f72] hover:text-[#1b1a17] transition"
+          <button
+            type="button"
+            onClick={toggleMode}
+            className="text-[10px] tracking-[0.3em] uppercase text-[#c9a882] hover:text-white transition"
           >
             退出 ↗
-          </Link>
+          </button>
         </header>
       )}
 
@@ -85,23 +110,12 @@ function CockpitLayoutInner({ children, currentHref, isHome = false }: Props) {
       <main className="flex-1 flex flex-col">{children}</main>
 
       {/* Footer — lecture 模式下隱藏 */}
-      {!isLecture && (
+      {!showLectureHeader && (
         <footer className="px-6 md:px-12 py-6 text-[11px] tracking-widest uppercase text-[#8a7f72] flex flex-wrap gap-3 justify-between border-t border-[#1b1a17]/5">
           <span>© 2026 可塗設計．與 LUXUS × RoomDreaming 合作出品</span>
           <span>v0.1.0 · 說明會版</span>
         </footer>
       )}
     </div>
-  );
-}
-
-/**
- * 外層 Suspense 是 Next 16 用 useSearchParams 的要求。
- */
-export function CockpitLayout(props: Props) {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-[#f7f3ee]" />}>
-      <CockpitLayoutInner {...props} />
-    </Suspense>
   );
 }
