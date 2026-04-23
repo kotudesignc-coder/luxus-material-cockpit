@@ -31,14 +31,26 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   const [adminVisible, setAdminVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // ----- 初始化：讀 URL query 判斷身份 -----
+  // ----- 初始化：讀 URL query + localStorage 備援判斷身份 -----
+  //
+  // 為什麼要備援？
+  // 網站內很多 <Link>（頁目錄、下一步、CTA）只帶 href 不帶 query，
+  // 點了之後 URL 會丟掉 ?mode=lecture&session=xxx 或 ?join=xxx。
+  // 每次 page 切換 → CockpitLayout 新 instance → 若只靠 URL 判身份就會掉。
+  // 解法：身份寫 localStorage，URL 沒帶時用 localStorage 還原。
+  //
+  // localStorage key：
+  //   cockpit-role   : 'lecturer' | 'student'
+  //   cockpit-session: 6 位 session id
+  //   cockpit-admin  : '1' = 顯示講師模式按鈕
   useEffect(() => {
     const sync = () => {
       const params = new URLSearchParams(window.location.search);
       const mode = params.get("mode");
       const session = params.get("session");
       const join = params.get("join");
-      // admin 後門：URL 加 ?admin=1 會顯示「講師模式」按鈕；進了就存 localStorage 記住
+
+      // admin 後門
       if (params.get("admin") === "1") {
         try {
           localStorage.setItem("cockpit-admin", "1");
@@ -48,30 +60,67 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
         setAdminVisible(localStorage.getItem("cockpit-admin") === "1");
       } catch {}
 
-      // 學員模式優先（join param 存在就是學員）
+      // --- 決定身份，URL 優先，localStorage 備援 ---
+      let ls = { role: "", id: "" };
+      try {
+        ls = {
+          role: localStorage.getItem("cockpit-role") ?? "",
+          id: localStorage.getItem("cockpit-session") ?? "",
+        };
+      } catch {}
+
+      // 1. URL 有 join → 學員
       if (join && isValidSessionId(join)) {
         setStudentJoinId(join);
         setIsLecture(false);
         setSessionId(null);
-      } else if (mode === "lecture") {
-        // 講師：若 URL 有帶 session id 就沿用；否則產新的
+        try {
+          localStorage.setItem("cockpit-role", "student");
+          localStorage.setItem("cockpit-session", join);
+        } catch {}
+        return;
+      }
+      // 2. URL 有 mode=lecture → 講師
+      if (mode === "lecture") {
         const id =
-          session && isValidSessionId(session) ? session : generateSessionId();
+          session && isValidSessionId(session)
+            ? session
+            : ls.role === "lecturer" && isValidSessionId(ls.id)
+              ? ls.id
+              : generateSessionId();
         setIsLecture(true);
         setSessionId(id);
         setStudentJoinId(null);
-        // 如果 URL 沒帶 session，補上（讓分享 URL 同步）
+        try {
+          localStorage.setItem("cockpit-role", "lecturer");
+          localStorage.setItem("cockpit-session", id);
+        } catch {}
+        // URL 沒帶 session 就補上（方便分享）
         if (!session || !isValidSessionId(session)) {
           const u = new URL(window.location.href);
           u.searchParams.set("mode", "lecture");
           u.searchParams.set("session", id);
           window.history.replaceState(null, "", u.toString());
         }
-      } else {
+        return;
+      }
+      // 3. URL 沒 query → 用 localStorage 還原身份
+      if (ls.role === "lecturer" && isValidSessionId(ls.id)) {
+        setIsLecture(true);
+        setSessionId(ls.id);
+        setStudentJoinId(null);
+        return;
+      }
+      if (ls.role === "student" && isValidSessionId(ls.id)) {
+        setStudentJoinId(ls.id);
         setIsLecture(false);
         setSessionId(null);
-        setStudentJoinId(null);
+        return;
       }
+      // 4. 什麼都沒有 → 自由模式
+      setIsLecture(false);
+      setSessionId(null);
+      setStudentJoinId(null);
     };
     sync();
     setMounted(true);
@@ -130,6 +179,10 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       }
       setIsLecture(false);
       setSessionId(null);
+      try {
+        localStorage.removeItem("cockpit-role");
+        localStorage.removeItem("cockpit-session");
+      } catch {}
       router.push(currentHref || "/");
     }
   }, [isLecture, currentHref, router, sessionId, endSession]);
@@ -239,11 +292,16 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
     ? getNeighbors(currentHref)
     : { prev: undefined, next: undefined };
 
-  // 學員端收到 ended 訊號：顯示「課程結束」toast 3 秒後淡出
+  // 學員端收到 ended 訊號：顯示「課程結束」toast + 清 localStorage 解除綁定
   const [showEndedToast, setShowEndedToast] = useState(false);
   useEffect(() => {
     if (role === "student" && studentState?.status === "ended") {
       setShowEndedToast(true);
+      // 清 localStorage 讓學員刷新或切頁後恢復自由模式
+      try {
+        localStorage.removeItem("cockpit-role");
+        localStorage.removeItem("cockpit-session");
+      } catch {}
       const t = setTimeout(() => setShowEndedToast(false), 6000);
       return () => clearTimeout(t);
     }
