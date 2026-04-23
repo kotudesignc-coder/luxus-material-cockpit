@@ -28,6 +28,7 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   const [isLecture, setIsLecture] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [studentJoinId, setStudentJoinId] = useState<string | null>(null);
+  const [adminVisible, setAdminVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   // ----- 初始化：讀 URL query 判斷身份 -----
@@ -37,6 +38,15 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       const mode = params.get("mode");
       const session = params.get("session");
       const join = params.get("join");
+      // admin 後門：URL 加 ?admin=1 會顯示「講師模式」按鈕；進了就存 localStorage 記住
+      if (params.get("admin") === "1") {
+        try {
+          localStorage.setItem("cockpit-admin", "1");
+        } catch {}
+      }
+      try {
+        setAdminVisible(localStorage.getItem("cockpit-admin") === "1");
+      } catch {}
 
       // 學員模式優先（join param 存在就是學員）
       if (join && isValidSessionId(join)) {
@@ -142,6 +152,23 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   const showLectureHeader = role === "lecturer";
   const showStudentOverlay = role === "student";
 
+  // ----- 全域：Ctrl/Cmd + Shift + L 切換講師模式（隱藏入口） -----
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "l") {
+        e.preventDefault();
+        toggleMode();
+        // 按過一次後常駐開啟按鈕，這台裝置以後都看得到
+        try {
+          localStorage.setItem("cockpit-admin", "1");
+          setAdminVisible(true);
+        } catch {}
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [toggleMode]);
+
   // ----- 講師模式：鍵盤翻頁 -----
   useEffect(() => {
     if (role !== "lecturer" || !currentHref) return;
@@ -244,14 +271,19 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
           >
             LUXUS × RoomDreaming × 可塗設計
           </Link>
-          <button
-            type="button"
-            onClick={toggleMode}
-            className="rounded-full border border-[#1b1a17] px-4 py-1.5 text-sm text-[#1b1a17] hover:bg-[#1b1a17] hover:text-[#f7f3ee] transition"
-            title="切換為講師主講模式"
-          >
-            講師模式
-          </button>
+          {adminVisible ? (
+            <button
+              type="button"
+              onClick={toggleMode}
+              className="rounded-full border border-[#1b1a17] px-4 py-1.5 text-sm text-[#1b1a17] hover:bg-[#1b1a17] hover:text-[#f7f3ee] transition"
+              title="切換為講師主講模式（Ctrl+Shift+L）"
+            >
+              講師模式
+            </button>
+          ) : (
+            // 無按鈕時，右側放一個不顯眼的佔位確保 justify-between 結構正常
+            <span />
+          )}
         </header>
       )}
 
