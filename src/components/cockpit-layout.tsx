@@ -129,7 +129,11 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   }, []);
 
   // ----- 講師廣播：每次 currentHref 變化就 POST 到 Redis -----
-  const { broadcast, endSession } = useLecturerSync(sessionId);
+  const {
+    broadcast,
+    endSession,
+    status: lecturerStatus,
+  } = useLecturerSync(sessionId);
   useEffect(() => {
     if (!isLecture || !sessionId || !currentHref) return;
     broadcast(currentHref);
@@ -137,9 +141,11 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   }, [isLecture, sessionId, currentHref, broadcast]);
 
   // ----- 學員訂閱：polling Redis，講師翻頁時跟著 router.push -----
-  const { state: studentState, error: studentError } = useStudentSync(
-    studentJoinId,
-  );
+  const {
+    state: studentState,
+    error: studentError,
+    status: studentStatus,
+  } = useStudentSync(studentJoinId);
   useEffect(() => {
     if (!studentJoinId || !studentState) return;
     // 跟隨講師翻頁（只在路徑不同時推，避免無限迴圈）
@@ -457,6 +463,56 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
         </div>
       )}
 
+
+      {/* 🔬 同步 debug HUD — 只在 lecturer / student 模式顯示，右下角 */}
+      {(role === "lecturer" || role === "student") && (
+        <div className="fixed bottom-5 right-5 z-50 pointer-events-none select-none max-w-[280px]">
+          <div className="px-3 py-2 rounded-lg bg-black/80 text-white text-[10px] font-mono leading-tight backdrop-blur shadow-lg space-y-1">
+            <div className="text-[#c9a882] tracking-widest uppercase text-[9px]">
+              SYNC · {role}
+            </div>
+            {role === "lecturer" && (
+              <>
+                <div>session: {sessionId ?? "—"}</div>
+                <div>current: {currentHref ?? "—"}</div>
+                <div>
+                  broadcast: {lecturerStatus.count}× ·{" "}
+                  {lecturerStatus.lastAt
+                    ? `${Math.round((Date.now() - lecturerStatus.lastAt) / 1000)}s ago`
+                    : "—"}
+                </div>
+                <div className="text-[#8a7f72]">
+                  last: {lecturerStatus.lastHref ?? "—"}
+                </div>
+                {lecturerStatus.lastError && (
+                  <div className="text-red-400">
+                    err: {lecturerStatus.lastError}
+                  </div>
+                )}
+              </>
+            )}
+            {role === "student" && (
+              <>
+                <div>join: {studentJoinId ?? "—"}</div>
+                <div>pageHref: {currentHref ?? "—"}</div>
+                <div>
+                  poll: {studentStatus.count}× ·{" "}
+                  {studentStatus.lastPollAt
+                    ? `${Math.round((Date.now() - studentStatus.lastPollAt) / 1000)}s ago`
+                    : "—"}
+                </div>
+                <div className="text-[#8a7f72]">
+                  serverHref: {studentStatus.lastServerHref ?? "—"}
+                </div>
+                <div>
+                  state: {studentState?.status ?? "—"}
+                  {studentError && ` · err=${studentError}`}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
