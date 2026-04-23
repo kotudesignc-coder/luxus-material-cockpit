@@ -7,7 +7,7 @@ export default function Home() {
   const firstContentPage = PAGES[1]; // /pain
 
   return (
-    <CockpitLayout isHome>
+    <CockpitLayout isHome currentHref="/">
       {/* Hero */}
       <section className="flex-1 grid grid-cols-1 lg:grid-cols-2 items-center gap-12 px-8 md:px-16 py-16 lg:py-24 max-w-[1400px] mx-auto w-full">
         {/* Left: copy */}

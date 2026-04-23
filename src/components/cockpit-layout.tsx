@@ -97,11 +97,21 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   const toggleMode = useCallback(async () => {
     const nextLecture = !isLecture;
     if (nextLecture) {
-      // 進入講師模式：產生 session + 帶 URL
+      // 進入講師模式：產生 session + 立刻 bootstrap 寫一次 Redis（避免學員搶先進來撞 404）
       const newId = generateSessionId();
+      const base = currentHref || "/";
+      try {
+        await fetch(`/api/session/${newId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ currentHref: base, status: "live" }),
+        });
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn("[session bootstrap failed]", err);
+      }
       setIsLecture(true);
       setSessionId(newId);
-      const base = currentHref || "/";
       router.push(`${base}?mode=lecture&session=${newId}`);
     } else {
       // 退出講師模式：結束 session 通知學員解鎖
@@ -268,12 +278,26 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       )}
 
       {role === "student" && (
-        <header className="flex items-center justify-between px-6 md:px-12 py-3 border-b border-[#1b1a17]/10 bg-[#8a6b3f] text-[#f7f3ee]">
+        <header
+          className={`flex items-center justify-between px-6 md:px-12 py-3 border-b border-[#1b1a17]/10 text-[#f7f3ee] ${
+            studentError === "not-found"
+              ? "bg-[#8a7f72]"
+              : studentState?.status === "ended"
+                ? "bg-[#3f7a3f]"
+                : "bg-[#8a6b3f]"
+          }`}
+        >
           <span className="flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase">
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            {studentState?.status === "ended"
-              ? "課程已結束 · 現在可自由瀏覽"
-              : "跟隨講師中 · 畫面自動同步"}
+            <span
+              className={`w-2 h-2 rounded-full bg-white ${
+                studentError === "not-found" ? "" : "animate-pulse"
+              }`}
+            />
+            {studentError === "not-found"
+              ? "等待老師開始 · 可先自由瀏覽"
+              : studentState?.status === "ended"
+                ? "課程已結束 · 現在可自由瀏覽"
+                : "跟隨講師中 · 畫面自動同步"}
             {studentJoinId && (
               <span className="ml-2 text-white/60 font-mono">
                 {studentJoinId}
@@ -343,17 +367,6 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
         </div>
       )}
 
-      {/* 學員模式：找不到 session（講師還沒開或已過期） */}
-      {role === "student" && studentError === "not-found" && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-6 py-4 rounded-2xl bg-[#a04040] text-white shadow-2xl">
-          <div className="text-xs tracking-[0.3em] uppercase mb-1">
-            Session 找不到
-          </div>
-          <div className="text-sm">
-            老師還沒開始講課、或這堂課已結束。你可以自由瀏覽。
-          </div>
-        </div>
-      )}
     </div>
   );
 }
