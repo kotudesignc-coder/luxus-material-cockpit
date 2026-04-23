@@ -84,7 +84,7 @@ export default function ComparePage() {
           </div>
           <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4vw,3.75rem)] leading-[1.2] font-medium tracking-tight max-w-3xl">
             看樣品，還是
-            <span className="text-[#8a6b3f]">看真的？</span>
+            <span className="text-[#8a6b3f]">看塗料的空間感。</span>
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
             把中間的拉桿左右滑動 — 同樣一個客戶、同樣一面牆、同樣一個想要的「溫暖米色」，
