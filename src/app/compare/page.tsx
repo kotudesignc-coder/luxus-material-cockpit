@@ -32,7 +32,7 @@ function TraditionalPanel() {
           Before
         </div>
         <h3 className="font-[family-name:var(--font-serif-tc)] text-4xl md:text-5xl font-medium text-white drop-shadow-lg">
-          傳統模式
+          選樣
         </h3>
         <p className="mt-3 text-base md:text-lg text-white/90">
           翻樣品 · 看色卡 · 靠想像
@@ -62,7 +62,7 @@ function AIPanel() {
 
       {/* label pill */}
       <div className="absolute top-8 right-8 px-4 py-1.5 rounded-full bg-white/95 backdrop-blur text-[11px] tracking-widest uppercase text-[#1b1a17] shadow-lg">
-        After · AI 選材
+        After · 選空間
       </div>
 
       <div className="absolute bottom-5 left-0 right-0 text-center text-[11px] tracking-widest uppercase text-white drop-shadow">
