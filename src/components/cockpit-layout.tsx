@@ -28,6 +28,7 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   const [isLecture, setIsLecture] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [studentJoinId, setStudentJoinId] = useState<string | null>(null);
+  const [isProjector, setIsProjector] = useState(false); // 投影幕模式：跟隨但不鎖、不顯示 overlay
   const [adminVisible, setAdminVisible] = useState(false);
   const [debugVisible, setDebugVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -59,11 +60,19 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       const mode = params.get("mode");
       const session = params.get("session");
       const join = params.get("join");
+      const projector = params.get("projector");
 
       // admin 後門
       if (params.get("admin") === "1") {
         try {
           localStorage.setItem("cockpit-admin", "1");
+        } catch {}
+      }
+      // reset 後門：?reset=1 清除所有身份（投影 / 學員 / 講師）回到自由模式
+      if (params.get("reset") === "1") {
+        try {
+          localStorage.removeItem("cockpit-role");
+          localStorage.removeItem("cockpit-session");
         } catch {}
       }
       try {
@@ -93,10 +102,24 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
         };
       } catch {}
 
+      // 0. URL 有 projector=xxx → 投影幕模式（跟隨但不鎖、畫面乾淨）
+      if (projector && isValidSessionId(projector)) {
+        devLog("[sync] → projector", projector);
+        setStudentJoinId(projector);
+        setIsProjector(true);
+        setIsLecture(false);
+        setSessionId(null);
+        try {
+          localStorage.setItem("cockpit-role", "projector");
+          localStorage.setItem("cockpit-session", projector);
+        } catch {}
+        return;
+      }
       // 1. URL 有 join → 學員
       if (join && isValidSessionId(join)) {
         devLog("[sync] → student (url join)", join);
         setStudentJoinId(join);
+        setIsProjector(false);
         setIsLecture(false);
         setSessionId(null);
         try {
@@ -140,12 +163,22 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
       if (ls.role === "student" && isValidSessionId(ls.id)) {
         devLog("[sync] → student (from localStorage)", ls.id);
         setStudentJoinId(ls.id);
+        setIsProjector(false);
+        setIsLecture(false);
+        setSessionId(null);
+        return;
+      }
+      if (ls.role === "projector" && isValidSessionId(ls.id)) {
+        devLog("[sync] → projector (from localStorage)", ls.id);
+        setStudentJoinId(ls.id);
+        setIsProjector(true);
         setIsLecture(false);
         setSessionId(null);
         return;
       }
       // 4. 什麼都沒有 → 自由模式
       devLog("[sync] → free (no url query, no ls)", { ls });
+      setIsProjector(false);
       setIsLecture(false);
       setSessionId(null);
       setStudentJoinId(null);
@@ -249,14 +282,16 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
   const progress =
     currentIndex >= 0 ? ((currentIndex + 1) / PAGES.length) * 100 : 0;
 
-  // 三種角色：lecturer / student / free
-  const role: "lecturer" | "student" | "free" = !mounted
+  // 四種角色：lecturer / student / projector / free
+  const role: "lecturer" | "student" | "projector" | "free" = !mounted
     ? "free"
     : isLecture
       ? "lecturer"
-      : studentJoinId
-        ? "student"
-        : "free";
+      : isProjector && studentJoinId
+        ? "projector"
+        : studentJoinId
+          ? "student"
+          : "free";
 
   const showLectureHeader = role === "lecturer";
   const showStudentOverlay = role === "student";
