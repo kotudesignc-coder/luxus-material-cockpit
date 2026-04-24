@@ -74,8 +74,8 @@ export const PAGES: CockpitPage[] = [
   },
   {
     href: "/end",
-    title: "繼續一起玩",
-    tag: "結尾 / LINE QR",
+    title: "換你來操作",
+    tag: "結尾 · LINE QR",
     pdfPage: "p.31",
   },
 ];
