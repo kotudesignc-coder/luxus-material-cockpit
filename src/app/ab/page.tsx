@@ -108,6 +108,9 @@ export default function ABPage() {
               核心
             </span>
           </div>
+          <p className="font-[family-name:var(--font-serif-tc)] text-xl md:text-2xl text-[#4a463f] mb-4 leading-snug">
+            「這個工具最好還要能夠<span className="text-[#1b1a17] font-medium">兩色即時比對</span>！」
+          </p>
           <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4vw,3.75rem)] leading-[1.2] font-medium tracking-tight max-w-3xl">
             <span className="text-[#8a6b3f]">塗料東西軍</span>，
             你要哪一邊？
