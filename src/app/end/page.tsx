@@ -92,12 +92,12 @@ export default function EndPage() {
             {page.pdfPage} · {page.tag}
           </div>
           <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4.5vw,4rem)] leading-[1.2] font-medium tracking-tight">
-            繼續一起玩。
+            換你來操作！
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl mx-auto leading-[1.9]">
-            工具留給你，網址就是 <span className="text-[#1b1a17] font-medium">ai-material-cockpit.vercel.app</span>。
+            AI 工具在 <span className="text-[#1b1a17] font-medium">LUXUS PAINT 官網</span>，
             <br />
-            隨時回來，下一位客戶就用它開場。
+            隨時打開，下一位客戶就用它開場。
           </p>
         </div>
 
