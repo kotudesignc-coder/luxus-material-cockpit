@@ -26,67 +26,12 @@ export default function Home() {
             不再看著小色卡想像。上傳一張空間照，AI
             會用你家的光線、比例、傢俱，把每種色漆真的貼上去讓你看。
           </p>
-          {/* AI 選材搜尋 BAR — 入口圖示 + 放大鏡 + 氛圍 chip */}
-          <div className="flex flex-col gap-3 pt-2">
-            <Link
-              href="/recommend"
-              className="group flex items-center gap-3 h-14 px-5 rounded-full bg-white border border-[#1b1a17]/15 hover:border-[#8a6b3f] hover:shadow-lg hover:shadow-[#8a6b3f]/10 transition"
-              aria-label="進入 AI 選材"
-            >
-              {/* 放大鏡 icon */}
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#8a6b3f"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="flex-shrink-0"
-                aria-hidden
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-              <span className="flex-1 text-[#8a7f72] text-base">
-                想要什麼氛圍？讓 AI 幫你找色 ⋯
-              </span>
-              <span className="text-[#8a6b3f] text-sm tracking-wider group-hover:translate-x-1 transition-transform">
-                AI 選材 →
-              </span>
-            </Link>
-
-            {/* 氛圍 chip 建議 */}
-            <div className="flex flex-wrap gap-2 px-1">
-              <span className="text-[11px] tracking-widest uppercase text-[#8a7f72] mr-1 self-center">
-                試試
-              </span>
-              {["溫暖", "侘寂", "冷色", "明亮", "沉穩"].map((tag) => (
-                <Link
-                  key={tag}
-                  href={`/recommend?mood=${encodeURIComponent(tag)}`}
-                  className="text-xs px-3 py-1 rounded-full bg-white/60 border border-[#1b1a17]/10 text-[#4a463f] hover:bg-[#1b1a17] hover:text-[#f7f3ee] hover:border-[#1b1a17] transition"
-                >
-                  {tag}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* 次要 CTA 按鈕 */}
-          <div className="flex flex-wrap gap-3 pt-2">
+          <div className="flex flex-wrap gap-4 pt-4">
             <Link
               href={firstContentPage.href}
-              className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-[#1b1a17] text-[#f7f3ee] text-sm font-medium hover:bg-[#8a6b3f] transition"
+              className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-[#1b1a17] text-[#f7f3ee] text-base font-medium hover:bg-[#8a6b3f] transition"
             >
               開始體驗 →
-            </Link>
-            <Link
-              href="/colors"
-              className="inline-flex items-center justify-center h-11 px-6 rounded-full border border-[#1b1a17]/30 text-[#1b1a17] text-sm font-medium hover:border-[#1b1a17] transition"
-            >
-              直接看色票
             </Link>
           </div>
         </div>
