@@ -41,10 +41,27 @@ export function StudentLinkButton({ sessionId }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-[10px] tracking-[0.3em] uppercase text-[#c9a882] hover:text-white border border-[#c9a882]/50 rounded-full px-3 py-1 transition"
-        title="取得給學員的連結"
+        className="flex items-center gap-1.5 text-xs tracking-widest uppercase bg-[#c9a882] text-[#1b1a17] hover:bg-white hover:text-[#1b1a17] rounded-full px-3.5 py-1.5 font-medium transition shadow-md shadow-[#c9a882]/30"
+        title="取得給學員的 QR 連結"
       >
-        學員連結
+        {/* QR icon */}
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+        >
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 20h2" />
+        </svg>
+        學員 QR
       </button>
 
       {open && (
