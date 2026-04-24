@@ -13,6 +13,8 @@ export type CockpitPage = {
   pdfPage: string;
   /** 是否為「核心 wow 頁」— 會加強調 */
   hero?: boolean;
+  /** 是否為互動頁 — 學員模式下不鎖 pointer-events，讓學員自己玩（跟隨僅限翻頁） */
+  interactive?: boolean;
 };
 
 export const PAGES: CockpitPage[] = [
@@ -40,6 +42,7 @@ export const PAGES: CockpitPage[] = [
     tag: "核心體驗",
     pdfPage: "p.14",
     hero: true,
+    interactive: true,
   },
   {
     href: "/ab",
@@ -47,12 +50,14 @@ export const PAGES: CockpitPage[] = [
     tag: "殺手鐧",
     pdfPage: "p.21",
     hero: true,
+    interactive: true,
   },
   {
     href: "/flow",
     title: "三步驟把顏色貼上你家",
     tag: "系統操作 · 實機 demo",
     pdfPage: "p.16",
+    interactive: true,
   },
   {
     href: "/photo-guide",
@@ -65,6 +70,7 @@ export const PAGES: CockpitPage[] = [
     title: "AI 幫你推薦",
     tag: "進階體驗",
     pdfPage: "p.24",
+    interactive: true,
   },
   {
     href: "/faq",

@@ -398,11 +398,16 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
     }
   }, [role, studentState?.status]);
 
-  // 判斷學員是否已解鎖（課程結束後可自由點）
+  // 判斷當前頁是否為互動頁（學員可自己玩）
+  const currentPage = currentHref ? PAGES.find((p) => p.href === currentHref) : undefined;
+  const isInteractivePage = !!currentPage?.interactive;
+
+  // 判斷學員是否已解鎖（課程結束後可自由點；互動頁也解鎖讓學員自己玩）
   const studentLocked =
     role === "student" &&
     studentState?.status !== "ended" &&
-    studentError !== "not-found";
+    studentError !== "not-found" &&
+    !isInteractivePage;
 
   return (
     <div
@@ -478,7 +483,9 @@ export function CockpitLayout({ children, currentHref, isHome = false }: Props) 
               ? "等待老師開始 · 可先自由瀏覽"
               : studentState?.status === "ended"
                 ? "課程已結束 · 現在可自由瀏覽"
-                : "跟隨講師中 · 畫面自動同步"}
+                : isInteractivePage
+                  ? "這頁自己玩 · 老師翻頁會帶你走"
+                  : "跟隨講師中 · 畫面自動同步"}
             {studentJoinId && (
               <span className="ml-2 text-white/60 font-mono">
                 {studentJoinId}
