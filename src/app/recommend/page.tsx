@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CockpitLayout } from "@/components/cockpit-layout";
 import { PageNav } from "@/components/page-nav";
@@ -24,6 +24,15 @@ export default function RecommendPage() {
   const page = getPageByHref(HREF)!;
 
   const [picked, setPicked] = useState<Set<string>>(new Set());
+
+  // 初次載入時從 URL ?mood=xxx 預先勾選（從 Hero 搜尋 BAR chip 跳進來時）
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mood = params.get("mood");
+    if (mood && ALL_MOODS.includes(mood)) {
+      setPicked(new Set([mood]));
+    }
+  }, []);
 
   function toggle(tag: string) {
     const next = new Set(picked);
