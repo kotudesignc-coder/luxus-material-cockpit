@@ -27,6 +27,7 @@ const CONTACTS: Contact[] = [
     brand: "LUXUS PAINT",
     slogan: "義大利米蘭藝術塗料 · 台灣總代理",
     lineUrl: "https://lin.ee/8sKKok1",
+    qrSrc: "/qr/luxus.png",
     tint: "from-[#1b1a17] to-[#4a463f]",
     label: "品牌方",
   },
