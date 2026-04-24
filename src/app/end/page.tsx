@@ -31,13 +31,7 @@ const CONTACTS: Contact[] = [
     tint: "from-[#1b1a17] to-[#4a463f]",
     label: "品牌方",
   },
-  {
-    brand: "可塗設計",
-    slogan: "AI 選材教學 · 設計師與油漆師傅的新工具",
-    lineUrl: "#", // TODO: 換成可塗設計 LINE
-    tint: "from-[#8a6b3f] to-[#c9a882]",
-    label: "教學方",
-  },
+  // 可塗設計 QR 暫不對外，等真實 QR + LINE URL 到位再加回
 ];
 
 /**
@@ -96,7 +90,7 @@ export default function EndPage() {
         </div>
 
         {/* Dual QR */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="flex justify-center"><div className="w-full max-w-md">
           {CONTACTS.map((c, i) => (
             <motion.a
               key={c.brand}
@@ -139,7 +133,7 @@ export default function EndPage() {
               </div>
             </motion.a>
           ))}
-        </div>
+        </div></div>
 
         {/* CTAs */}
         <motion.div
