@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { QRCodeSVG } from "qrcode.react";
 import { CockpitLayout } from "@/components/cockpit-layout";
 import { PageNav } from "@/components/page-nav";
 import { getPageByHref } from "@/lib/pages";
@@ -72,6 +74,16 @@ function FakeQR({ tint }: { tint: string }) {
 export default function EndPage() {
   const page = getPageByHref(HREF)!;
 
+  // 教材本身的入口網址（這個網站）— 散會後讓觀眾掃 QR 帶回家
+  const [siteUrl, setSiteUrl] = useState<string>(
+    "https://ai-material-cockpit.vercel.app",
+  );
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setSiteUrl(window.location.origin);
+    }
+  }, []);
+
   return (
     <CockpitLayout currentHref={HREF}>
       <section className="flex-1 px-6 md:px-12 py-16 md:py-20 max-w-[1200px] mx-auto w-full">
@@ -134,6 +146,39 @@ export default function EndPage() {
             </motion.a>
           ))}
         </div></div>
+
+        {/* 教材入口 QR — 散會後帶回家繼續玩 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.7 }}
+          className="mt-10 md:mt-12 flex justify-center"
+        >
+          <div className="flex items-center gap-5 md:gap-6 p-5 md:p-6 rounded-2xl bg-[#1b1a17] text-[#f7f3ee] shadow-2xl shadow-[#1b1a17]/20">
+            <div className="p-2 bg-white rounded-xl flex-shrink-0">
+              <QRCodeSVG
+                value={siteUrl}
+                size={120}
+                fgColor="#1b1a17"
+                bgColor="#ffffff"
+                level="M"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a882]">
+                教材入口
+              </div>
+              <div className="font-[family-name:var(--font-serif-tc)] text-lg md:text-xl font-medium leading-snug">
+                掃這裡，
+                <br />
+                帶回家繼續玩。
+              </div>
+              <div className="mt-1 text-[11px] text-[#8a7f72] font-mono break-all">
+                {siteUrl.replace(/^https?:\/\//, "")}
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* CTAs */}
         <motion.div
