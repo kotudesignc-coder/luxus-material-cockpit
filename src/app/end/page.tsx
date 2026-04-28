@@ -95,9 +95,9 @@ export default function EndPage() {
             換你來操作！
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl mx-auto leading-[1.9]">
-            AI 工具在 <span className="text-[#1b1a17] font-medium">LUXUS PAINT 官網</span>，
+            <strong className="text-[#1b1a17]">AI 工具</strong>在 <span className="text-[#1b1a17] font-medium">LUXUS PAINT 官網</span>，下一位客戶就用它開場。
             <br />
-            隨時打開，下一位客戶就用它開場。
+            <strong className="text-[#1b1a17]">這份教材</strong>留給你，掃下方 QR 隨時回來複習。
           </p>
         </div>
 

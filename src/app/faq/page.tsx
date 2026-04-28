@@ -43,7 +43,7 @@ const FAQ: QA[] = [
   },
   {
     q: "我可以保留客戶的選色紀錄嗎？",
-    a: "可以下載選好的照片，分享給客戶看效果。",
+    a: "目前沒有自動帳號紀錄功能。實務上，把選好的空間預覽圖**下載**或**截圖傳 LINE 給客戶**，這張圖本身就是最完整的「選色紀錄」 — 比起色號文字，圖片更不會看錯。後續正式版會考慮加業務帳號功能，自動歸檔每位客戶的選色歷程。",
     tag: "designer",
   },
 ];
@@ -132,7 +132,7 @@ export default function FAQPage() {
           <span className="text-xs tracking-widest uppercase text-[#8a6b3f] mr-2">
             還有問題？
           </span>
-          往下一頁 <strong>繼續一起玩</strong> 掃 QR 加 LINE 直接問。
+          往下一頁 <strong>換你來操作</strong> 掃 QR 加 LINE 直接問。
         </div>
       </section>
 
