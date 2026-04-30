@@ -135,45 +135,79 @@ function RoomPreview({
   color: Color;
   room: (typeof ROOMS)[number];
 }) {
+  // 有 photoSrc → 真照模式（mix-blend-mode 疊主牆色）
+  // 沒 photoSrc → 純色 + 剪影 mock 模式（fallback）
+  // 想恢復剪影：把對應 ROOMS[].photoSrc 設成 undefined 即可
+  const hasPhoto = !!room.photoSrc;
+
   return (
-    <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl shadow-[#8a6b3f]/15 border border-[#1b1a17]/5">
-      {/* main wall — receives the selected color */}
-      <motion.div
-        key={color.hex}
-        initial={{ opacity: 0.85 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className="absolute inset-0"
-        style={{ background: color.hex }}
-      />
+    <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl shadow-[#8a6b3f]/15 border border-[#1b1a17]/5 bg-[#e8dfd1]">
+      {hasPhoto ? (
+        <>
+          {/* 真照模式：底圖 + multiply 染色 + 主牆色 chip 顯示 */}
+          <motion.div
+            key={room.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="absolute inset-0"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={room.photoSrc}
+              alt={`LUXUS ${room.nameZh}案場`}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </motion.div>
+          {/* 主牆色覆膜（mix-blend-mode 染色） */}
+          <motion.div
+            key={color.hex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.45 }}
+            transition={{ duration: 0.4 }}
+            className="absolute inset-0 mix-blend-multiply pointer-events-none"
+            style={{ background: color.hex }}
+          />
+          {/* 暗角讓 label 可讀 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent pointer-events-none" />
+        </>
+      ) : (
+        <>
+          {/* 剪影模式（fallback）：純色主牆 + 剪影 */}
+          <motion.div
+            key={color.hex}
+            initial={{ opacity: 0.85 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="absolute inset-0"
+            style={{ background: color.hex }}
+          />
+          {/* top natural light wash */}
+          <div className="absolute top-0 left-0 right-0 h-[45%] bg-gradient-to-b from-white/25 to-transparent" />
+          {/* baseboard line */}
+          <div className="absolute bottom-[24%] left-0 right-0 h-[1.5px] bg-black/10" />
+          {/* floor */}
+          <div className="absolute bottom-0 left-0 right-0 h-[24%] bg-gradient-to-b from-[#8a6b3f]/25 to-[#4a463f]/45" />
+          {/* room-specific furnishings */}
+          <motion.div
+            key={room.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="absolute inset-0 pointer-events-none"
+          >
+            <RoomFurnishings roomId={room.id} />
+          </motion.div>
+        </>
+      )}
 
-      {/* top natural light wash */}
-      <div className="absolute top-0 left-0 right-0 h-[45%] bg-gradient-to-b from-white/25 to-transparent" />
-
-      {/* baseboard line */}
-      <div className="absolute bottom-[24%] left-0 right-0 h-[1.5px] bg-black/10" />
-
-      {/* floor */}
-      <div className="absolute bottom-0 left-0 right-0 h-[24%] bg-gradient-to-b from-[#8a6b3f]/25 to-[#4a463f]/45" />
-
-      {/* room-specific furnishings（放最上層、每次切換有 fade in） */}
-      <motion.div
-        key={room.id}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className="absolute inset-0 pointer-events-none"
-      >
-        <RoomFurnishings roomId={room.id} />
-      </motion.div>
-
-      {/* room label */}
-      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/85 backdrop-blur text-[11px] tracking-widest uppercase text-[#1b1a17]">
+      {/* room label（兩種模式都有） */}
+      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/85 backdrop-blur text-[11px] tracking-widest uppercase text-[#1b1a17] z-10">
         {room.nameZh}
       </div>
 
-      {/* color stamp */}
-      <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur shadow-lg">
+      {/* color stamp（兩種模式都有） */}
+      <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur shadow-lg z-10">
         <span
           className="w-4 h-4 rounded-full ring-1 ring-black/10"
           style={{ background: color.hex }}

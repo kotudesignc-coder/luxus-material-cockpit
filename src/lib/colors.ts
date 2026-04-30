@@ -111,17 +111,18 @@ export type RoomScene = {
   photoSrc?: string;
 };
 
+// photoSrc 設 undefined → 自動 fallback 為剪影 mock（恢復路徑）
 export const ROOMS: RoomScene[] = [
   { id: "livingroom", nameZh: "客廳", nameEn: "Living Room", baseColor: "#E8DFCE",
-    caption: "家人聚集的主場域" },
+    caption: "家人聚集的主場域", photoSrc: "/luxus/rooms/livingroom.jpg" },
   { id: "bedroom",    nameZh: "臥室", nameEn: "Bedroom",     baseColor: "#EADED1",
-    caption: "私密、放鬆、睡眠" },
+    caption: "私密、放鬆、睡眠", photoSrc: "/luxus/rooms/bedroom.jpg" },
   { id: "kitchen",    nameZh: "廚房", nameEn: "Kitchen",     baseColor: "#D8D4C8",
-    caption: "料理與交流" },
+    caption: "料理與交流" }, // 沒對應真照 → 用剪影
   { id: "bathroom",   nameZh: "衛浴", nameEn: "Bathroom",    baseColor: "#DDE2DC",
-    caption: "清潔與獨處" },
+    caption: "清潔與獨處" }, // 沒對應真照 → 用剪影
   { id: "diningroom", nameZh: "餐廳", nameEn: "Dining",      baseColor: "#E4DED0",
-    caption: "用餐與款待" },
+    caption: "用餐與款待", photoSrc: "/luxus/rooms/diningroom.jpg" },
   { id: "foyer",      nameZh: "玄關", nameEn: "Foyer",       baseColor: "#DFD9CC",
-    caption: "家的第一印象" },
+    caption: "家的第一印象", photoSrc: "/luxus/rooms/foyer.jpg" },
 ];
