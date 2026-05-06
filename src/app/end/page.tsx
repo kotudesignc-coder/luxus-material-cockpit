@@ -96,14 +96,11 @@ export default function EndPage() {
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl mx-auto leading-[1.9]">
             <strong className="text-[#1b1a17]">AI 工具</strong>在 <span className="text-[#1b1a17] font-medium">LUXUS PAINT 官網</span>，下一位客戶就用它開場。
-            <br />
-            <strong className="text-[#1b1a17]">這份教材</strong>留給你，掃下方 QR 隨時回來複習。
           </p>
         </div>
 
-        {/* 兩張 QR 並排，同尺寸 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-          {/* LUXUS LINE QR */}
+        {/* LUXUS QR 單卡置中放大 */}
+        <div className="flex justify-center">
           {CONTACTS.map((c, i) => (
             <motion.a
               key={c.brand}
@@ -113,24 +110,24 @@ export default function EndPage() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.15, duration: 0.7 }}
-              className="group flex flex-col gap-5 p-6 md:p-8 rounded-3xl bg-white/70 border border-[#1b1a17]/10 hover:border-[#8a6b3f]/40 hover:shadow-2xl hover:shadow-[#8a6b3f]/10 transition"
+              className="group flex flex-col gap-6 p-8 md:p-10 rounded-3xl bg-white/70 border border-[#1b1a17]/10 hover:border-[#8a6b3f]/40 hover:shadow-2xl hover:shadow-[#8a6b3f]/10 transition w-full max-w-xl"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] tracking-[0.3em] uppercase text-[#8a6b3f]">
+                <span className="text-xs tracking-[0.3em] uppercase text-[#8a6b3f]">
                   {c.label}
                 </span>
-                <span className="text-xs text-[#8a7f72] group-hover:text-[#8a6b3f] transition">
+                <span className="text-sm text-[#8a7f72] group-hover:text-[#8a6b3f] transition">
                   加 LINE →
                 </span>
               </div>
 
-              <div className="aspect-square w-full bg-white rounded-2xl flex items-center justify-center p-3">
+              <div className="aspect-square w-full bg-white rounded-2xl flex items-center justify-center p-4">
                 {c.qrSrc ? (
                   <Image
                     src={c.qrSrc}
                     alt={`${c.brand} LINE QR`}
-                    width={400}
-                    height={400}
+                    width={600}
+                    height={600}
                     className="w-full h-full object-contain"
                   />
                 ) : (
@@ -139,48 +136,13 @@ export default function EndPage() {
               </div>
 
               <div className="text-center">
-                <div className="font-[family-name:var(--font-serif-tc)] text-2xl font-medium">
+                <div className="font-[family-name:var(--font-serif-tc)] text-3xl font-medium">
                   {c.brand}
                 </div>
-                <div className="mt-1.5 text-sm text-[#4a463f]">{c.slogan}</div>
+                <div className="mt-2 text-base text-[#4a463f]">{c.slogan}</div>
               </div>
             </motion.a>
           ))}
-
-          {/* 教材入口 QR — 跟 LUXUS 卡同尺寸並排 */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.7 }}
-            className="flex flex-col gap-5 p-6 md:p-8 rounded-3xl bg-[#1b1a17] text-[#f7f3ee] shadow-2xl shadow-[#1b1a17]/20"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] tracking-[0.3em] uppercase text-[#c9a882]">
-                教材入口
-              </span>
-              <span className="text-xs text-[#8a7f72]">隨時回來複習 ↗</span>
-            </div>
-
-            <div className="aspect-square w-full bg-white rounded-2xl flex items-center justify-center p-3">
-              <QRCodeSVG
-                value={siteUrl}
-                size={400}
-                fgColor="#1b1a17"
-                bgColor="#ffffff"
-                level="M"
-                className="w-full h-full"
-              />
-            </div>
-
-            <div className="text-center">
-              <div className="font-[family-name:var(--font-serif-tc)] text-2xl font-medium">
-                掃這裡，帶回家繼續玩
-              </div>
-              <div className="mt-1.5 text-sm text-[#8a7f72] font-mono break-all">
-                {siteUrl.replace(/^https?:\/\//, "")}
-              </div>
-            </div>
-          </motion.div>
         </div>
 
         {/* Credits */}
