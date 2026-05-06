@@ -9,50 +9,95 @@ import { COLORS } from "@/lib/colors";
 
 const HREF = "/recommend";
 
-/** 從 COLORS.mood 聚出的關鍵字集合（去重） */
-const ALL_MOODS = Array.from(new Set(COLORS.flatMap((c) => c.mood)));
+/**
+ * 5 大氛圍合集 — 對齊 LUXUS 官網實際介面（溫暖舒適 / 冷靜沉穩 / 奢華精緻 / 質樸自然 / 明亮清爽）
+ * 每個合集內部對應到 colors.ts 裡多個 mood tag，勾了就收斂相關色票。
+ */
+type MoodGroup = {
+  id: string;
+  label: string;
+  /** 圓點顏色（chip 視覺 hint） */
+  dotColor: string;
+  /** 內部對應的 mood tags（colors.ts 的 mood 欄位） */
+  moods: string[];
+};
 
-/** 常見氛圍分組，讓 UI 不要散亂 */
-const MOOD_GROUPS: { title: string; tags: string[] }[] = [
-  { title: "溫度", tags: ["溫暖", "溫潤", "柔和", "冷色", "現代", "都會"] },
-  { title: "風格", tags: ["侘寂", "日系", "北歐", "奢華", "質樸", "優雅", "戲劇"] },
-  { title: "彩度", tags: ["明亮", "沉穩", "低彩度", "深邃"] },
-  { title: "質感", tags: ["石材", "珠光", "金屬", "鐵鏽", "紅金", "土地", "星點"] },
+const MOOD_GROUPS: MoodGroup[] = [
+  {
+    id: "warm",
+    label: "溫暖舒適",
+    dotColor: "#C49073",
+    moods: ["溫暖", "溫潤", "柔和"],
+  },
+  {
+    id: "cool",
+    label: "冷靜沉穩",
+    dotColor: "#8A9299",
+    moods: ["冷色", "沉穩", "低彩度", "都會"],
+  },
+  {
+    id: "luxe",
+    label: "奢華精緻",
+    dotColor: "#C9A882",
+    moods: ["奢華", "優雅", "金屬", "珠光", "紅金"],
+  },
+  {
+    id: "natural",
+    label: "質樸自然",
+    dotColor: "#7E8B6D",
+    moods: ["質樸", "土地", "侘寂", "石材", "鐵鏽"],
+  },
+  {
+    id: "bright",
+    label: "明亮清爽",
+    dotColor: "#E8C9C0",
+    moods: ["明亮", "北歐", "現代", "日系"],
+  },
 ];
 
 export default function RecommendPage() {
   const page = getPageByHref(HREF)!;
 
+  /** 勾選的氛圍合集 id */
   const [picked, setPicked] = useState<Set<string>>(new Set());
 
-  // 初次載入時從 URL ?mood=xxx 預先勾選（從 Hero 搜尋 BAR chip 跳進來時）
+  // 初次載入時從 URL ?mood=xxx 預先勾選（從 Hero / 其他入口跳進來時）
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const mood = params.get("mood");
-    if (mood && ALL_MOODS.includes(mood)) {
+    if (mood && MOOD_GROUPS.some((g) => g.id === mood)) {
       setPicked(new Set([mood]));
     }
   }, []);
 
-  function toggle(tag: string) {
+  function toggle(groupId: string) {
     const next = new Set(picked);
-    if (next.has(tag)) next.delete(tag);
-    else next.add(tag);
+    if (next.has(groupId)) next.delete(groupId);
+    else next.add(groupId);
     setPicked(next);
   }
 
-  /** 依照勾選關鍵字過濾色票，按「命中數」排序 */
+  /** 把勾選的合集展開成所有 mood tags 的聯集 */
+  const activeMoods = useMemo(() => {
+    const set = new Set<string>();
+    MOOD_GROUPS.forEach((g) => {
+      if (picked.has(g.id)) g.moods.forEach((m) => set.add(m));
+    });
+    return set;
+  }, [picked]);
+
+  /** 依照展開後的 mood 過濾色票，按命中數排序 */
   const ranked = useMemo(() => {
-    if (picked.size === 0) return [];
+    if (activeMoods.size === 0) return [];
     return COLORS
       .map((c) => {
-        const hits = c.mood.filter((m) => picked.has(m)).length;
+        const hits = c.mood.filter((m) => activeMoods.has(m)).length;
         return { color: c, hits };
       })
       .filter((x) => x.hits > 0)
       .sort((a, b) => b.hits - a.hits)
       .slice(0, 3);
-  }, [picked]);
+  }, [activeMoods]);
 
   return (
     <CockpitLayout currentHref={HREF}>
@@ -68,39 +113,35 @@ export default function RecommendPage() {
           </h1>
           <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
             客戶通常講不出色號，只會說「想要溫暖一點」「有點侘寂感」。
-            勾幾個關鍵字，AI 從 LUXUS 200+ 色票裡直接篩給你 3 個最貼的。
+            勾幾個氛圍，AI 從 LUXUS 200+ 色票裡直接篩給你 3 個最貼的。
           </p>
         </div>
 
-        {/* Mood picker */}
-        <div className="space-y-6">
-          {MOOD_GROUPS.map((g) => (
-            <div key={g.title}>
-              <div className="text-xs tracking-[0.3em] uppercase text-[#8a7f72] mb-3">
-                {g.title}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {g.tags
-                  .filter((t) => ALL_MOODS.includes(t))
-                  .map((tag) => {
-                    const isPicked = picked.has(tag);
-                    return (
-                      <button
-                        key={tag}
-                        onClick={() => toggle(tag)}
-                        className={`px-4 py-2 rounded-full text-sm transition ${
-                          isPicked
-                            ? "bg-[#1b1a17] text-[#f7f3ee] scale-105"
-                            : "bg-white/60 text-[#4a463f] hover:bg-white border border-[#1b1a17]/10"
-                        }`}
-                      >
-                        {tag}
-                      </button>
-                    );
-                  })}
-              </div>
-            </div>
-          ))}
+        {/* Mood picker — 5 大氛圍合集（對齊 LUXUS 官網介面） */}
+        <div className="flex flex-wrap gap-3 md:gap-4">
+          {MOOD_GROUPS.map((g) => {
+            const isPicked = picked.has(g.id);
+            return (
+              <button
+                key={g.id}
+                onClick={() => toggle(g.id)}
+                className={`flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm md:text-base transition border ${
+                  isPicked
+                    ? "bg-[#1b1a17] text-[#f7f3ee] border-[#1b1a17] scale-105 shadow-lg"
+                    : "bg-white/70 text-[#1b1a17] border-[#1b1a17]/15 hover:bg-white hover:border-[#8a6b3f]"
+                }`}
+                aria-pressed={isPicked}
+              >
+                <span
+                  className={`w-3 h-3 rounded-full flex-shrink-0 ring-1 ${
+                    isPicked ? "ring-white/30" : "ring-black/5"
+                  }`}
+                  style={{ background: g.dotColor }}
+                />
+                {g.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Funnel visual */}
@@ -123,17 +164,19 @@ export default function RecommendPage() {
               fill="url(#fg)"
               opacity="0.85"
             />
-            {/* top dots (many colors) */}
-            {[...Array(12)].map((_, i) => (
-              <circle
-                key={i}
-                cx={30 + i * 18}
-                cy={22 + (i % 3) * 6}
-                r="4"
-                fill="#1b1a17"
-                opacity={0.35 + (i % 3) * 0.15}
-              />
-            ))}
+            {/* top dots — 用各 group 的色點 */}
+            {MOOD_GROUPS.flatMap((g, gi) =>
+              [0, 1].map((j) => (
+                <circle
+                  key={`${g.id}-${j}`}
+                  cx={32 + gi * 36 + j * 12}
+                  cy={20 + (j % 2) * 8}
+                  r="5"
+                  fill={g.dotColor}
+                  opacity={picked.has(g.id) ? 1 : 0.4}
+                />
+              )),
+            )}
             {/* bottom → arrow */}
             <path
               d="M 130 128 L 130 138 M 120 133 L 130 140 L 140 133"
@@ -145,8 +188,8 @@ export default function RecommendPage() {
           </svg>
           <div className="mt-3 text-xs tracking-widest uppercase text-[#8a7f72]">
             {picked.size === 0
-              ? "從上方勾幾個關鍵字開始"
-              : `已選 ${picked.size} 個條件 · 收斂到 ${ranked.length} 個推薦色`}
+              ? "勾幾個氛圍，漏斗就會幫你篩色"
+              : `已選 ${picked.size} 個氛圍 · 收斂到 ${ranked.length} 個推薦色`}
           </div>
         </div>
 
@@ -199,7 +242,7 @@ export default function RecommendPage() {
                           <span
                             key={m}
                             className={`text-[11px] px-2 py-0.5 rounded-full ${
-                              picked.has(m)
+                              activeMoods.has(m)
                                 ? "bg-[#1b1a17] text-[#f7f3ee]"
                                 : "bg-[#8a6b3f]/10 text-[#8a6b3f]"
                             }`}
@@ -221,7 +264,7 @@ export default function RecommendPage() {
                 className="text-center text-sm text-[#8a7f72] py-8"
               >
                 {picked.size === 0
-                  ? "從上方勾關鍵字，漏斗就會開始幫你篩色"
+                  ? "從上方勾氛圍，漏斗就會開始幫你篩色"
                   : "目前勾選沒有完全命中的色 — 減少條件試試"}
               </motion.div>
             )}
