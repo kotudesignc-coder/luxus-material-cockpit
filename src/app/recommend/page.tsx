@@ -144,52 +144,147 @@ export default function RecommendPage() {
           })}
         </div>
 
-        {/* Funnel visual */}
+        {/* Funnel visual — 放大 + 科技感 + 大數字 stat */}
         <div className="mt-14 md:mt-16 flex flex-col items-center">
-          <svg
-            width="260"
-            height="140"
-            viewBox="0 0 260 140"
-            className="text-[#8a6b3f]"
-            aria-hidden
-          >
-            <defs>
-              <linearGradient id="fg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#d9c9b3" />
-                <stop offset="100%" stopColor="#6e5233" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M 20 10 L 240 10 L 170 80 L 170 125 L 90 125 L 90 80 Z"
-              fill="url(#fg)"
-              opacity="0.85"
+          <div className="relative w-full max-w-md">
+            {/* 背景 grid 紋理（科技感） */}
+            <div
+              className="absolute inset-0 opacity-[0.06] pointer-events-none"
+              style={{
+                backgroundImage:
+                  "linear-gradient(#1b1a17 1px, transparent 1px), linear-gradient(90deg, #1b1a17 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
+              }}
+              aria-hidden
             />
-            {/* top dots — 用各 group 的色點 */}
-            {MOOD_GROUPS.flatMap((g, gi) =>
-              [0, 1].map((j) => (
-                <circle
-                  key={`${g.id}-${j}`}
-                  cx={32 + gi * 36 + j * 12}
-                  cy={20 + (j % 2) * 8}
-                  r="5"
-                  fill={g.dotColor}
-                  opacity={picked.has(g.id) ? 1 : 0.4}
-                />
-              )),
-            )}
-            {/* bottom → arrow */}
-            <path
-              d="M 130 128 L 130 138 M 120 133 L 130 140 L 140 133"
-              stroke="#1b1a17"
-              strokeWidth="2"
-              fill="none"
-              strokeLinecap="round"
-            />
-          </svg>
-          <div className="mt-3 text-xs tracking-widest uppercase text-[#8a7f72]">
-            {picked.size === 0
-              ? "勾幾個氛圍，漏斗就會幫你篩色"
-              : `已選 ${picked.size} 個氛圍 · 收斂到 ${ranked.length} 個推薦色`}
+
+            <svg
+              viewBox="0 0 400 260"
+              className="w-full h-auto"
+              aria-hidden
+            >
+              <defs>
+                <linearGradient id="funnel-stroke" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#8a6b3f" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#8a6b3f" stopOpacity="0.3" />
+                </linearGradient>
+                <linearGradient id="funnel-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#c9a882" stopOpacity="0.08" />
+                  <stop offset="100%" stopColor="#8a6b3f" stopOpacity="0.18" />
+                </linearGradient>
+                {/* 流動光的剪裁路徑 — 限制在漏斗內部 */}
+                <clipPath id="funnel-clip">
+                  <path d="M 30 15 L 370 15 L 240 145 L 240 230 L 160 230 L 160 145 Z" />
+                </clipPath>
+              </defs>
+
+              {/* 漏斗線稿 */}
+              <path
+                d="M 30 15 L 370 15 L 240 145 L 240 230 L 160 230 L 160 145 Z"
+                fill="url(#funnel-fill)"
+                stroke="url(#funnel-stroke)"
+                strokeWidth="1.5"
+              />
+
+              {/* 流動光（橫向掃描） */}
+              <g clipPath="url(#funnel-clip)">
+                <rect x="-100" y="0" width="120" height="260" fill="white" opacity="0.18">
+                  <animate
+                    attributeName="x"
+                    from="-120"
+                    to="400"
+                    dur="3s"
+                    repeatCount="indefinite"
+                  />
+                </rect>
+              </g>
+
+              {/* 5 大色點（top） */}
+              {MOOD_GROUPS.map((g, gi) => (
+                <g key={g.id}>
+                  <circle
+                    cx={70 + gi * 65}
+                    cy={45}
+                    r={picked.has(g.id) ? 11 : 7}
+                    fill={g.dotColor}
+                    opacity={picked.has(g.id) ? 1 : 0.35}
+                    style={{ transition: "all 0.3s" }}
+                  />
+                  {picked.has(g.id) && (
+                    <circle
+                      cx={70 + gi * 65}
+                      cy={45}
+                      r={11}
+                      fill="none"
+                      stroke={g.dotColor}
+                      strokeWidth="1"
+                      opacity="0.5"
+                    >
+                      <animate
+                        attributeName="r"
+                        from="11"
+                        to="20"
+                        dur="1.5s"
+                        repeatCount="indefinite"
+                      />
+                      <animate
+                        attributeName="opacity"
+                        from="0.5"
+                        to="0"
+                        dur="1.5s"
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                  )}
+                </g>
+              ))}
+
+              {/* 底部出口箭頭 */}
+              <path
+                d="M 200 240 L 200 252 M 192 246 L 200 254 L 208 246"
+                stroke="#8a6b3f"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+              />
+            </svg>
+
+            {/* 大數字 stat */}
+            <div className="mt-6 flex items-end justify-center gap-4 md:gap-8 font-mono">
+              <div className="flex flex-col items-end">
+                <div className="text-[10px] tracking-[0.3em] uppercase text-[#8a7f72]">
+                  Input
+                </div>
+                <div className="text-3xl md:text-4xl font-medium tabular-nums text-[#1b1a17]">
+                  {COLORS.length.toString().padStart(3, "0")}
+                  <span className="text-[#8a7f72] text-xl">+</span>
+                </div>
+                <div className="text-[10px] tracking-widest text-[#8a7f72]">
+                  LUXUS COLORS
+                </div>
+              </div>
+
+              <div className="text-2xl text-[#8a6b3f] mb-3 tabular-nums">→</div>
+
+              <div className="flex flex-col items-start">
+                <div className="text-[10px] tracking-[0.3em] uppercase text-[#8a6b3f]">
+                  Output
+                </div>
+                <div className="text-3xl md:text-4xl font-medium tabular-nums text-[#8a6b3f]">
+                  {ranked.length.toString().padStart(3, "0")}
+                </div>
+                <div className="text-[10px] tracking-widest text-[#8a7f72]">
+                  RECOMMENDED
+                </div>
+              </div>
+            </div>
+
+            {/* 一行精簡狀態文字 */}
+            <div className="mt-4 text-center text-xs tracking-[0.25em] uppercase text-[#8a7f72] font-mono">
+              {picked.size === 0
+                ? "↑ Pick a mood to start"
+                : `${picked.size} mood${picked.size > 1 ? "s" : ""} active`}
+            </div>
           </div>
         </div>
 
