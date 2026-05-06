@@ -20,16 +20,15 @@ export default function DealersPage() {
   return (
     <CockpitLayout currentHref={HREF}>
       <section className="flex-1 px-6 md:px-12 py-16 md:py-20 max-w-[1400px] mx-auto w-full">
-        <div className="mb-10 md:mb-14 text-center md:text-left">
+        <div className="mb-10 md:mb-14 text-center">
           <div className="text-xs tracking-[0.4em] uppercase text-[#8a7f72] mb-4">
             {page.pdfPage} · {page.tag}
           </div>
-          <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2rem,4vw,3.75rem)] leading-[1.2] font-medium tracking-tight max-w-3xl">
-            南部選材夥伴，
-            <br className="hidden md:block" />
-            <span className="text-[#8a6b3f]">在你身邊。</span>
+          <h1 className="font-[family-name:var(--font-serif-tc)] text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.15] font-medium tracking-tight">
+            換你來操作！
           </h1>
-          <p className="mt-6 text-lg text-[#4a463f] max-w-2xl leading-[1.9]">
+          <p className="mt-6 text-lg text-[#4a463f] max-w-2xl mx-auto leading-[1.9]">
+            <strong className="text-[#1b1a17]">南部選材夥伴</strong>在你身邊。
             掃下面任一張 QR，進入該經銷的 LUXUS AI 選材入口。
             選好顏色，他們會在 LINE 收到你的選材結果，立刻接手。
           </p>

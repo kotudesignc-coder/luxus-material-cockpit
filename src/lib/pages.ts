@@ -80,14 +80,8 @@ export const PAGES: CockpitPage[] = [
   },
   {
     href: "/dealers",
-    title: "南部選材夥伴",
-    tag: "經銷 QR",
-    pdfPage: "new",
-  },
-  {
-    href: "/end",
     title: "換你來操作",
-    tag: "結尾 · LINE QR",
+    tag: "南部選材夥伴",
     pdfPage: "p.31",
   },
 ];
