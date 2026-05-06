@@ -101,8 +101,9 @@ export default function EndPage() {
           </p>
         </div>
 
-        {/* Dual QR */}
-        <div className="flex justify-center"><div className="w-full max-w-md">
+        {/* 兩張 QR 並排，同尺寸 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+          {/* LUXUS LINE QR */}
           {CONTACTS.map((c, i) => (
             <motion.a
               key={c.brand}
@@ -123,14 +124,14 @@ export default function EndPage() {
                 </span>
               </div>
 
-              <div className="max-w-[240px] mx-auto w-full">
+              <div className="aspect-square w-full bg-white rounded-2xl flex items-center justify-center p-3">
                 {c.qrSrc ? (
                   <Image
                     src={c.qrSrc}
                     alt={`${c.brand} LINE QR`}
-                    width={320}
-                    height={320}
-                    className="w-full h-auto rounded-2xl"
+                    width={400}
+                    height={400}
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <FakeQR tint={c.tint} />
@@ -145,61 +146,42 @@ export default function EndPage() {
               </div>
             </motion.a>
           ))}
-        </div></div>
 
-        {/* 教材入口 QR — 散會後帶回家繼續玩 */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.7 }}
-          className="mt-10 md:mt-12 flex justify-center"
-        >
-          <div className="flex items-center gap-5 md:gap-6 p-5 md:p-6 rounded-2xl bg-[#1b1a17] text-[#f7f3ee] shadow-2xl shadow-[#1b1a17]/20">
-            <div className="p-2 bg-white rounded-xl flex-shrink-0">
+          {/* 教材入口 QR — 跟 LUXUS 卡同尺寸並排 */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.7 }}
+            className="flex flex-col gap-5 p-6 md:p-8 rounded-3xl bg-[#1b1a17] text-[#f7f3ee] shadow-2xl shadow-[#1b1a17]/20"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] tracking-[0.3em] uppercase text-[#c9a882]">
+                教材入口
+              </span>
+              <span className="text-xs text-[#8a7f72]">隨時回來複習 ↗</span>
+            </div>
+
+            <div className="aspect-square w-full bg-white rounded-2xl flex items-center justify-center p-3">
               <QRCodeSVG
                 value={siteUrl}
-                size={120}
+                size={400}
                 fgColor="#1b1a17"
                 bgColor="#ffffff"
                 level="M"
+                className="w-full h-full"
               />
             </div>
-            <div className="flex flex-col gap-1.5">
-              <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a882]">
-                教材入口
+
+            <div className="text-center">
+              <div className="font-[family-name:var(--font-serif-tc)] text-2xl font-medium">
+                掃這裡，帶回家繼續玩
               </div>
-              <div className="font-[family-name:var(--font-serif-tc)] text-lg md:text-xl font-medium leading-snug">
-                掃這裡，
-                <br />
-                帶回家繼續玩。
-              </div>
-              <div className="mt-1 text-[11px] text-[#8a7f72] font-mono break-all">
+              <div className="mt-1.5 text-sm text-[#8a7f72] font-mono break-all">
                 {siteUrl.replace(/^https?:\/\//, "")}
               </div>
             </div>
-          </div>
-        </motion.div>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.7 }}
-          className="mt-14 md:mt-16 flex flex-col md:flex-row items-center justify-center gap-4"
-        >
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center h-12 px-8 rounded-full border border-[#1b1a17]/30 text-[#1b1a17] text-base font-medium hover:border-[#1b1a17] transition"
-          >
-            從頭再玩一次
-          </Link>
-          <Link
-            href="/colors"
-            className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-[#1b1a17] text-[#f7f3ee] text-base font-medium hover:bg-[#8a6b3f] transition"
-          >
-            直接跳色票 →
-          </Link>
-        </motion.div>
+          </motion.div>
+        </div>
 
         {/* Credits */}
         <div className="mt-16 md:mt-20 text-center text-xs tracking-widest uppercase text-[#8a7f72] space-y-1.5">
